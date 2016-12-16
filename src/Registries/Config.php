@@ -12,6 +12,8 @@
 
 namespace O2System\Parser\Registries;
 
+// ------------------------------------------------------------------------
+
 /**
  * Class Config
  *
@@ -19,14 +21,19 @@ namespace O2System\Parser\Registries;
  */
 class Config extends \O2System\Kernel\Registries\Config
 {
+    /**
+     * Config::__construct
+     *
+     * @param array $config
+     */
     public function __construct ( array $config = [ ] )
     {
         $defaultConfig = [
-            'driver'       => 'moustache',
-            'phpScripts'   => true,
-            'phpFunctions' => true,
-            'phpConstants' => true,
-            'phpGlobals'   => true,
+            'driver'            => 'moustache',
+            'allowPhpScripts'   => true,
+            'allowPhpFunctions' => true,
+            'allowPhpConstants' => true,
+            'allowPhpGlobals'   => true,
         ];
 
         $config = array_merge( $defaultConfig, $config );
