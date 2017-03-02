@@ -126,24 +126,26 @@ class Moustache extends AbstractEngine implements ParserEngineInterface
             }
         } else {
             $functionsCodes = [
+                '{{%%()}}' => '<?php echo \1(); ?>',
                 '{{%%(%%)}}' => '<?php echo \1(\2); ?>',
             ];
         }
 
         // php variables codes
         $variablesCodes = [
-            '{{$%%->%%}}'    => '<?php echo $\1->\2; ?>',
-            '{{$%%[%%]}}'    => '<?php echo $\1[\'\2\']; ?>',
-            '{{$%%.%%}}'     => '<?php echo $\1[\'\2\']; ?>',
-            '{{$%% = %%}}'   => '<?php $\1 = \2; ?>',
-            '{{$%%++}}'      => '<?php $\1++; ?>',
-            '{{$%%--}}'      => '<?php $\1--; ?>',
-            '{{$%%}}'        => '<?php echo $\1; ?>',
-            '{{/*}}'         => '<?php /*',
-            '{{*/}}'         => '*/ ?>',
-            '{{ %% OR %% }}' => '<?php echo ( empty(\1) ? \'\2\' : $\1 ); ?>',
-            '{{!!$%%!!}}'    => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
-            '{{--%%--}}'     => '',
+            '{{$%%->%%(%%)}}' => '<?php echo $\1->\2(\3); ?>',
+            '{{$%%->%%}}'     => '<?php echo $\1->\2; ?>',
+            '{{$%%[%%]}}'     => '<?php echo $\1[\'\2\']; ?>',
+            '{{$%%.%%}}'      => '<?php echo $\1[\'\2\']; ?>',
+            '{{$%% = %%}}'    => '<?php $\1 = \2; ?>',
+            '{{$%%++}}'       => '<?php $\1++; ?>',
+            '{{$%%--}}'       => '<?php $\1--; ?>',
+            '{{$%%}}'         => '<?php echo $\1; ?>',
+            '{{/*}}'          => '<?php /*',
+            '{{*/}}'          => '*/ ?>',
+            '{{ %% OR %% }}'  => '<?php echo ( empty(\1) ? \'\2\' : $\1 ); ?>',
+            '{{!!$%%!!}}'     => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
+            '{{--%%--}}'      => '',
         ];
 
         if ( $this->config[ 'allowPhpConstants' ] === true ) {
@@ -156,7 +158,7 @@ class Moustache extends AbstractEngine implements ParserEngineInterface
             }
         }
 
-        $phpCodes = array_merge( $logicalCodes, $loopCodes, $functionsCodes, $variablesCodes );
+        $phpCodes = array_merge( $logicalCodes, $loopCodes, $variablesCodes, $functionsCodes );
 
         $patterns = $replace = [ ];
         foreach ( $phpCodes as $tplCode => $phpCode ) {
