@@ -59,21 +59,21 @@ class Blade extends AbstractEngine implements ParserEngineInterface
      *
      * @var array
      */
-    private $vars = [ ];
+    private $vars = [];
 
     /**
      * Blade Sections
      *
      * @var array
      */
-    private $sections = [ ];
+    private $sections = [];
 
-    public function __construct ( array $config = [ ] )
+    public function __construct( array $config = [] )
     {
         $this->config = array_merge( $this->config, $config );
     }
 
-    public function parseString ( $string, array $vars = [ ] )
+    public function parseString( $string, array $vars = [] )
     {
         $this->vars =& $vars;
 
@@ -107,7 +107,7 @@ class Blade extends AbstractEngine implements ParserEngineInterface
         return $this->replaceString( $string );
     }
 
-    private function replaceString ( $string )
+    private function replaceString( $string )
     {
         if ( $this->config[ 'allowPhpGlobals' ] === false ) {
             $string = str_replace(
@@ -177,8 +177,8 @@ class Blade extends AbstractEngine implements ParserEngineInterface
         if ( $this->config[ 'allowPhpFunctions' ] === false ) {
             $functionsCodes[ '@%%(%%)' ] = '';
         } elseif ( is_array( $this->config[ 'allowPhpFunctions' ] ) AND count(
-                                                                            $this->config[ 'allowPhpFunctions' ]
-                                                                        ) > 0
+                $this->config[ 'allowPhpFunctions' ]
+            ) > 0
         ) {
             foreach ( $this->config[ 'allowPhpFunctions' ] as $functionName ) {
                 $functionsCodes[ '@' . $functionName . '(%%)' ] = '<?php echo ' . $functionName . '(\1); ?>';
@@ -214,7 +214,7 @@ class Blade extends AbstractEngine implements ParserEngineInterface
 
         $phpCodes = array_merge( $logicalCodes, $loopCodes, $functionsCodes, $variablesCodes );
 
-        $patterns = $replace = [ ];
+        $patterns = $replace = [];
         foreach ( $phpCodes as $tplCode => $phpCode ) {
             $patterns[] = '#' . str_replace( '%%', '(.+)', preg_quote( $tplCode, '#' ) ) . '#U';
             $replace[] = $phpCode;
@@ -246,7 +246,7 @@ class Blade extends AbstractEngine implements ParserEngineInterface
         return $output;
     }
 
-    private function collectSection ( $match )
+    private function collectSection( $match )
     {
         $section = str_replace( [ '\'', '(', ')' ], '', trim( $match[ 1 ] ) );
         $xSection = explode( ',', $section );
@@ -257,7 +257,7 @@ class Blade extends AbstractEngine implements ParserEngineInterface
         return null;
     }
 
-    private function collectSectionWithShow ( $match )
+    private function collectSectionWithShow( $match )
     {
         $offset = str_replace( [ '(\'', '\')' ], '', trim( $match[ 1 ] ) );
         $this->sections[ $offset ] = $this->replaceString( $match[ 2 ] );
@@ -265,7 +265,7 @@ class Blade extends AbstractEngine implements ParserEngineInterface
         return '@yield(\'' . $offset . '\')';
     }
 
-    private function collectSectionWithEnd ( $match )
+    private function collectSectionWithEnd( $match )
     {
         $offset = str_replace( [ '(\'', '\')' ], '', trim( $match[ 1 ] ) );
         $content = trim( $match[ 2 ] );
@@ -275,7 +275,7 @@ class Blade extends AbstractEngine implements ParserEngineInterface
         return null;
     }
 
-    private function collectSectionWithParent ( $match )
+    private function collectSectionWithParent( $match )
     {
         $offset = str_replace( [ '(\'', '\')' ], '', trim( $match[ 1 ] ) );
         $content = $this->replaceString( $match[ 2 ] );

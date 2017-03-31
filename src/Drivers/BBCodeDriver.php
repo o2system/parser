@@ -33,7 +33,7 @@ class BBCodeDriver extends BaseDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize ( array $config )
+    public function initialize( array $config )
     {
         if ( empty( $this->engine ) ) {
             if ( $this->isSupported() ) {
@@ -60,7 +60,7 @@ class BBCodeDriver extends BaseDriver
      *
      * @return bool
      */
-    public function isSupported ()
+    public function isSupported()
     {
         if ( class_exists( '\JBBCode\Parser' ) ) {
             return true;
@@ -78,7 +78,7 @@ class BBCodeDriver extends BaseDriver
      *
      * @return string
      */
-    public function parse ( array $vars = [ ] )
+    public function parse( array $vars = [] )
     {
         $this->engine->parse( $this->string );
 
@@ -96,7 +96,7 @@ class BBCodeDriver extends BaseDriver
      *
      * @return bool
      */
-    protected function isValidEngine ( $engine )
+    protected function isValidEngine( $engine )
     {
         if ( $engine instanceof \JBBCode\Parser ) {
             return true;

@@ -10,7 +10,7 @@
  */
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Registries;
+namespace O2System\Parser\Datastructures;
 
 // ------------------------------------------------------------------------
 
@@ -19,14 +19,14 @@ namespace O2System\Parser\Registries;
  *
  * @package O2System\Parser\Metadata
  */
-class Config extends \O2System\Kernel\Registries\Config
+class Config extends \O2System\Kernel\Datastructures\Config
 {
     /**
      * Config::__construct
      *
      * @param array $config
      */
-    public function __construct ( array $config = [ ] )
+    public function __construct( array $config = [] )
     {
         $defaultConfig = [
             'driver'            => 'moustache',

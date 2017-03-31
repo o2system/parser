@@ -32,7 +32,7 @@ class ShortcodesDriver extends AbstractDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize ( array $config )
+    public function initialize( array $config )
     {
         if ( empty( $this->engine ) ) {
             $this->engine = new Shortcodes( $config );
@@ -50,7 +50,7 @@ class ShortcodesDriver extends AbstractDriver
      *
      * @return string
      */
-    public function parse ( array $vars = [ ] )
+    public function parse( array $vars = [] )
     {
         return $this->engine->parseString( $this->string, $vars );
     }
@@ -64,7 +64,7 @@ class ShortcodesDriver extends AbstractDriver
      *
      * @return bool
      */
-    public function isSupported ()
+    public function isSupported()
     {
         if ( class_exists( '\O2System\Parser\Engines\Shortcodes' ) ) {
             return true;
@@ -84,7 +84,7 @@ class ShortcodesDriver extends AbstractDriver
      *
      * @return bool
      */
-    protected function isValidEngine ( $engine )
+    protected function isValidEngine( $engine )
     {
         if ( $engine instanceof Shortcodes ) {
             return true;

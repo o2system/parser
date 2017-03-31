@@ -31,7 +31,7 @@ class MoustacheDriver extends AbstractDriver
      *
      * @return static
      */
-    public function initialize ( array $config )
+    public function initialize( array $config )
     {
         if ( empty( $this->engine ) ) {
             $this->engine = new Moustache( $config );
@@ -49,7 +49,7 @@ class MoustacheDriver extends AbstractDriver
      *
      * @return string
      */
-    public function parse ( array $vars = [ ] )
+    public function parse( array $vars = [] )
     {
         return $this->engine->parseString( $this->string, $vars );
     }
@@ -63,7 +63,7 @@ class MoustacheDriver extends AbstractDriver
      *
      * @return bool
      */
-    public function isSupported ()
+    public function isSupported()
     {
         if ( class_exists( '\O2System\Parser\Engines\Moustache' ) ) {
             return true;
@@ -83,7 +83,7 @@ class MoustacheDriver extends AbstractDriver
      *
      * @return bool
      */
-    protected function isValidEngine ( $engine )
+    protected function isValidEngine( $engine )
     {
         if ( $engine instanceof Moustache ) {
             return true;

@@ -25,11 +25,11 @@ use O2System\Core\Exceptions\BadThirdPartyException;
  */
 class MarkdownDriver extends BaseDriver
 {
-    const MARKDOWN_BASIC  = 0;
+    const MARKDOWN_BASIC = 0;
 
     const MARKDOWN_GITHUB = 1;
 
-    const MARKDOWN_EXTRA  = 2;
+    const MARKDOWN_EXTRA = 2;
 
     private $flavour = 0;
 
@@ -41,7 +41,7 @@ class MarkdownDriver extends BaseDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize ( array $config )
+    public function initialize( array $config )
     {
         if ( empty( $this->engine ) ) {
             if ( $this->isSupported() ) {
@@ -71,7 +71,7 @@ class MarkdownDriver extends BaseDriver
      *
      * @return bool
      */
-    public function isSupported ()
+    public function isSupported()
     {
         if ( class_exists( '\cebe\markdown\Markdown' ) ) {
             return true;
@@ -80,7 +80,7 @@ class MarkdownDriver extends BaseDriver
         return false;
     }
 
-    public function setFlavour ( $flavour )
+    public function setFlavour( $flavour )
     {
         if ( is_int( $flavour ) AND in_array( $flavour, range( 0, 2 ) ) ) {
             $this->flavour = $flavour;
@@ -100,7 +100,7 @@ class MarkdownDriver extends BaseDriver
      *
      * @return string
      */
-    public function parse ( array $vars = [ ] )
+    public function parse( array $vars = [] )
     {
         switch ( $this->flavour ) {
             default:
@@ -139,7 +139,7 @@ class MarkdownDriver extends BaseDriver
      *
      * @return bool
      */
-    protected function isValidEngine ( $engine )
+    protected function isValidEngine( $engine )
     {
         if ( $engine instanceof \cebe\markdown\Markdown ) {
             return true;

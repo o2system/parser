@@ -33,7 +33,7 @@ class DwooDriver extends BaseDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize ( array $config )
+    public function initialize( array $config )
     {
         if ( empty( $this->engine ) ) {
             if ( $this->isSupported() ) {
@@ -59,7 +59,7 @@ class DwooDriver extends BaseDriver
      *
      * @return bool
      */
-    public function isSupported ()
+    public function isSupported()
     {
         if ( class_exists( '\Dwoo' ) ) {
             return true;
@@ -77,7 +77,7 @@ class DwooDriver extends BaseDriver
      *
      * @return string
      */
-    public function parse ( array $vars = [ ] )
+    public function parse( array $vars = [] )
     {
         return $this->engine->get( new \Dwoo_Template_String( $this->string ), $vars );
     }
@@ -93,7 +93,7 @@ class DwooDriver extends BaseDriver
      *
      * @return bool
      */
-    protected function isValidEngine ( $engine )
+    protected function isValidEngine( $engine )
     {
         if ( $engine instanceof \Dwoo ) {
             return true;

@@ -36,7 +36,7 @@ abstract class AbstractEngine implements ParserEngineInterface
      *
      * @return string
      */
-    public function parseFile ( $filePath, array $vars = [ ] )
+    public function parseFile( $filePath, array $vars = [] )
     {
         $fileExtension = '.' . pathinfo( $filePath, PATHINFO_EXTENSION );
 

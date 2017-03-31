@@ -33,7 +33,7 @@ class SmartyDriver extends BaseDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize ( array $config )
+    public function initialize( array $config )
     {
         if ( empty( $this->engine ) ) {
             if ( $this->isSupported() ) {
@@ -59,7 +59,7 @@ class SmartyDriver extends BaseDriver
      *
      * @return bool
      */
-    public function isSupported ()
+    public function isSupported()
     {
         if ( class_exists( '\Smarty' ) ) {
             return true;
@@ -77,7 +77,7 @@ class SmartyDriver extends BaseDriver
      *
      * @return string
      */
-    public function parse ( array $vars = [ ] )
+    public function parse( array $vars = [] )
     {
         foreach ( $vars as $_assign_key => $_assign_value ) {
             $this->engine->assign( $_assign_key, $_assign_value );
@@ -97,7 +97,7 @@ class SmartyDriver extends BaseDriver
      *
      * @return bool
      */
-    protected function isValidEngine ( $engine )
+    protected function isValidEngine( $engine )
     {
         if ( $engine instanceof \Smarty ) {
             return true;

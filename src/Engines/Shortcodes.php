@@ -51,7 +51,7 @@ class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
      *
      * @return string
      */
-    public function parseFile ( $filePath, array $vars = [ ] )
+    public function parseFile( $filePath, array $vars = [] )
     {
         if ( is_file( $filePath ) ) {
             return $this->parseString( file_get_contents( $filePath ), $vars );
@@ -80,7 +80,7 @@ class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
      *
      * @return mixed
      */
-    public function parseString ( $source, array $vars = [ ] )
+    public function parseString( $source, array $vars = [] )
     {
         if ( count( $vars ) ) {
             foreach ( $vars as $offset => $value ) {
@@ -113,7 +113,7 @@ class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
      *
      * @return string The shortcode search regular expression
      */
-    private function getRegex ()
+    private function getRegex()
     {
         $offsetKeys = array_keys( $this->getArrayCopy() );
         $offsetRegex = join( '|', array_map( 'preg_quote', $offsetKeys ) );
@@ -131,9 +131,9 @@ class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
      *
      * @return bool
      */
-    protected function isValid ( $value )
+    protected function isValid( $value )
     {
-        return (bool) is_callable( $value );
+        return (bool)is_callable( $value );
     }
 
     // ------------------------------------------------------------------------
@@ -153,7 +153,7 @@ class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
      *
      * @return mixed False on failure.
      */
-    private function parseRegex ( $match )
+    private function parseRegex( $match )
     {
         // allow [[foo]] syntax for escaping a tag
         if ( $match[ 1 ] == '[' && $match[ 6 ] == ']' ) {
@@ -167,11 +167,11 @@ class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
             if ( isset( $match[ 5 ] ) ) {
                 // enclosing tag - extra parameter
                 return $match[ 1 ] . call_user_func(
-                    $this->__get( $offset ),
-                    $attr,
-                    $match[ 5 ],
-                    $offset
-                ) . $match[ 6 ];
+                        $this->__get( $offset ),
+                        $attr,
+                        $match[ 5 ],
+                        $offset
+                    ) . $match[ 6 ];
             } else {
                 // self-closing tag
                 return $match[ 1 ] . call_user_func( $this->__get( $offset ), $attr, null, $offset ) . $match[ 6 ];
@@ -196,9 +196,9 @@ class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
      *
      * @return array List of attributes and their value.
      */
-    private function parseRegexAttr ( $string )
+    private function parseRegexAttr( $string )
     {
-        $attr = [ ];
+        $attr = [];
         $pattern = '/(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/';
         $string = preg_replace( "/[\x{00a0}\x{200b}]+/u", " ", $string );
         if ( preg_match_all( $pattern, $string, $match, PREG_SET_ORDER ) ) {

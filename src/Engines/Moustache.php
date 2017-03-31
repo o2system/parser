@@ -55,14 +55,14 @@ class Moustache extends AbstractEngine implements ParserEngineInterface
      *
      * @param array $config
      */
-    public function __construct ( array $config = [ ] )
+    public function __construct( array $config = [] )
     {
         $this->config = array_merge( $this->config, $config );
     }
 
     // ------------------------------------------------------------------------
 
-    public function parseString ( $string, array $vars = [ ] )
+    public function parseString( $string, array $vars = [] )
     {
         if ( $this->config[ 'allowPhpGlobals' ] === false ) {
             $string = str_replace(
@@ -112,21 +112,21 @@ class Moustache extends AbstractEngine implements ParserEngineInterface
         ];
 
         // php function codes
-        $functionsCodes = [ ];
+        $functionsCodes = [];
         if ( $this->config[ 'allowPhpFunctions' ] === false ) {
             $functionsCodes = [
                 '{{%%(%%)}}' => '',
             ];
         } elseif ( is_array( $this->config[ 'allowPhpFunctions' ] ) AND count(
-                                                                            $this->config[ 'allowPhpFunctions' ]
-                                                                        ) > 0
+                $this->config[ 'allowPhpFunctions' ]
+            ) > 0
         ) {
             foreach ( $this->config[ 'allowPhpFunctions' ] as $function_name ) {
                 $functionsCodes[ '{{' . $function_name . '(%%)}}' ] = '<?php echo ' . $function_name . '(\1); ?>';
             }
         } else {
             $functionsCodes = [
-                '{{%%()}}' => '<?php echo \1(); ?>',
+                '{{%%()}}'   => '<?php echo \1(); ?>',
                 '{{%%(%%)}}' => '<?php echo \1(\2); ?>',
             ];
         }
@@ -160,7 +160,7 @@ class Moustache extends AbstractEngine implements ParserEngineInterface
 
         $phpCodes = array_merge( $logicalCodes, $loopCodes, $variablesCodes, $functionsCodes );
 
-        $patterns = $replace = [ ];
+        $patterns = $replace = [];
         foreach ( $phpCodes as $tplCode => $phpCode ) {
             $patterns[] = '#' . str_replace( '%%', '(.+)', preg_quote( $tplCode, '#' ) ) . '#U';
             $replace[] = $phpCode;

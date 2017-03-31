@@ -58,7 +58,7 @@ abstract class AbstractDriver implements ParserDriverInterface
      *
      * @return bool
      */
-    public function loadFile ( $filePath )
+    public function loadFile( $filePath )
     {
         if ( $filePath instanceof \SplFileInfo ) {
             $filePath = $filePath->getRealPath();
@@ -80,7 +80,7 @@ abstract class AbstractDriver implements ParserDriverInterface
      *
      * @return bool
      */
-    public function loadString ( $string )
+    public function loadString( $string )
     {
         $this->string = htmlspecialchars_decode( $string );
 
@@ -92,14 +92,14 @@ abstract class AbstractDriver implements ParserDriverInterface
             );
         }
 
-        return (bool) empty( $this->string );
+        return (bool)empty( $this->string );
     }
 
     // ------------------------------------------------------------------------
 
-    public function isInitialize ()
+    public function isInitialize()
     {
-        return (bool) ( empty( $this->engine ) ? false : true );
+        return (bool)( empty( $this->engine ) ? false : true );
     }
 
     // --------------------------------------------------------------------------------------
@@ -111,18 +111,18 @@ abstract class AbstractDriver implements ParserDriverInterface
      *
      * @return static
      */
-    abstract public function initialize ( array $config );
+    abstract public function initialize( array $config );
 
     // ------------------------------------------------------------------------
 
-    public function &getEngine ()
+    public function &getEngine()
     {
         return $this->engine;
     }
 
     // ------------------------------------------------------------------------
 
-    public function setEngine ( $engine )
+    public function setEngine( $engine )
     {
         if ( $this->isValidEngine( $engine ) ) {
             $this->engine =& $engine;
@@ -133,11 +133,11 @@ abstract class AbstractDriver implements ParserDriverInterface
         return false;
     }
 
-    abstract protected function isValidEngine ( $engine );
+    abstract protected function isValidEngine( $engine );
 
     // ------------------------------------------------------------------------
 
-    public function __call ( $method, array $arguments = [ ] )
+    public function __call( $method, array $arguments = [] )
     {
         if ( method_exists( $this, $method ) ) {
             return call_user_func_array( [ &$this, $method ], $arguments );
@@ -155,5 +155,5 @@ abstract class AbstractDriver implements ParserDriverInterface
      *
      * @return bool
      */
-    abstract public function isSupported ();
+    abstract public function isSupported();
 }
