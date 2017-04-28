@@ -40,6 +40,5 @@
     "psr-4": {
       "O2System\\Parser\\": "src"
     }
-  },
-  "minimum-stability": "dev"
+  }
 }
