@@ -1,7 +1,7 @@
 {
   "name": "o2system/parser",
   "description": "PHP Parser library.",
-  "type": "php-library",
+  "type": "package",
   "keywords": [
     "utilities",
     "php",
@@ -40,5 +40,6 @@
     "psr-4": {
       "O2System\\Parser\\": "src"
     }
-  }
+  },
+  "minimum-stability": "dev"
 }
