@@ -166,7 +166,7 @@ class Drivers extends AbstractObjectRegistryPattern
 
     public function loadString( $string )
     {
-        $this->sourceString = htmlspecialchars_decode( $string );
+        $this->sourceString = $string;
 
         if ( $this->config->allowPhpScripts === false ) {
             $this->sourceString = preg_replace(
