@@ -1,7 +1,19 @@
-# parser
-O2System Parser Library
+# O2System Parser
+O2System Parser is an Open Source PHP Template Engines Driver Library, it allows you to render view templates using different drivers.
 
-### Composer Instalation
+### Supported Parser Engines Drivers
+- Noodle by O2System Framework (default)
+- BBCode
+- Markdown
+- Dwoo
+- Laravel Blade for O2System Framework (adapted)
+- Mustache
+- Wordpress alike Shortcodes by O2System Framework
+- Smarty
+- Twig
+
+
+### Composer Installation
 The best way to install O2System Parser is to use [Composer](https://getcomposer.org)
 ```
 composer require o2system/parser --prefer-dist dev-master
