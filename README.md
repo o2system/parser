@@ -16,7 +16,7 @@ O2System Parser is an Open Source PHP Template Engines Driver Library, it allows
 ### Composer Installation
 The best way to install O2System Parser is to use [Composer](https://getcomposer.org)
 ```
-composer require o2system/parser --prefer-dist dev-master
+composer require o2system/parser
 ```
 > Packagist: [https://packagist.org/packages/o2system/parser](https://packagist.org/packages/o2system/parser)
 
