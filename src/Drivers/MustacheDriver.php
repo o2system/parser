@@ -40,7 +40,7 @@ class MustacheDriver extends BaseDriver
                 $this->engine = new \Mustache_Engine();
             } else {
                 throw new BadThirdPartyException(
-                    'E_PARSER_THIRD_PARTY',
+                    'PARSER_E_THIRD_PARTY',
                     0,
                     [ 'Mustache Template Engine by Justin Hileman', 'https://github.com/bobthecow' ]
                 );

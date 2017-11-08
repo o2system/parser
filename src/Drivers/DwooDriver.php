@@ -40,7 +40,7 @@ class DwooDriver extends BaseDriver
                 $this->engine = new \Dwoo();
             } else {
                 throw new BadThirdPartyException(
-                    'E_PARSER_THIRD_PARTY',
+                    'PARSER_E_THIRD_PARTY',
                     0,
                     [ 'BBCode Parser by Jackson Owens', 'https://github.com/jbowens/jBBCode' ]
                 );

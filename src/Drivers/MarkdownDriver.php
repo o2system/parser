@@ -52,7 +52,7 @@ class MarkdownDriver extends BaseDriver
                 }
             } else {
                 throw new BadThirdPartyException(
-                    'E_PARSER_THIRD_PARTY',
+                    'PARSER_E_THIRD_PARTY',
                     0,
                     [ 'Markdown Parser by Carsten Brandt', 'https://github.com/cebe/markdown' ]
                 );

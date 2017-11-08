@@ -123,7 +123,9 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
             ) > 0
         ) {
             foreach ( $this->config[ 'allowPhpFunctions' ] as $function_name ) {
-                $functionsCodes[ '{{' . $function_name . '(%%)}}' ] = '<?php echo ' . $function_name . '(\1); ?>';
+                if( function_exists( $function_name ) ) {
+                    $functionsCodes[ '{{' . $function_name . '(%%)}}' ] = '<?php echo ' . $function_name . '(\1); ?>';
+                }
             }
         } else {
             $functionsCodes = [
@@ -154,7 +156,9 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
 
             if ( ! empty( $constantsVariables[ 'user' ] ) ) {
                 foreach ( $constantsVariables[ 'user' ] as $constant => $value ) {
-                    $variablesCodes[ '{{' . $constant . '}}' ] = '<?php echo ' . $constant . '; ?>';
+                    if( defined( $constant ) ) {
+                        $variablesCodes[ '{{' . $constant . '}}' ] = '<?php echo ' . $constant . '; ?>';
+                    }
                 }
             }
         }
@@ -185,7 +189,13 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
          */
         ob_start();
 
-        echo eval( '?>' . preg_replace( '/;*\s*\?>/', '; ?>', $string ) );
+        try {
+            echo @eval( '?>' . @preg_replace( '/;*\s*\?>/', '; ?>', $string ) );
+        } catch( \Exception $e ) {
+            throw new \Exception( $e->getMessage(), $e->getCode(), $e );
+            
+        }
+        
 
         $output = ob_get_contents();
         @ob_end_clean();

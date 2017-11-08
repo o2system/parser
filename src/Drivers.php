@@ -69,6 +69,10 @@ class Drivers extends AbstractObjectRegistryPattern
      */
     public function __construct( Datastructures\Config $config )
     {
+        language()
+            ->addFilePath( __DIR__ . DIRECTORY_SEPARATOR )
+            ->loadFile( 'parser' );
+
         $this->config = $config;
 
         if ( $this->config->offsetExists( 'driver' ) ) {
@@ -175,6 +179,18 @@ class Drivers extends AbstractObjectRegistryPattern
                 str_replace( '<?=', '<?php echo ', $this->sourceString )
             );
         }
+
+        $this->sourceString = str_replace(
+            [
+                '__DIR__',
+                '__FILE__'
+            ],
+            [
+                "'" . $this->getSourceFileDirectory() . "'",
+                "'" . $this->getSourceFilePath() . "'"
+            ],
+            $this->sourceString
+        );
 
         return empty( $this->sourceString );
     }

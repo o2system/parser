@@ -41,7 +41,7 @@ class BladeDriver extends AbstractDriver
             if ( $this->isSupported() ) {
                 $this->engine = new Blade( $config );
             } else {
-                throw new BadThirdPartyException( 'E_PARSER_THIRD_PARTY', 0, [ '\O2System\Parser\Engines\Blade' ] );
+                throw new BadThirdPartyException( 'PARSER_E_THIRD_PARTY', 0, [ '\O2System\Parser\Engines\Blade' ] );
             }
         }
 

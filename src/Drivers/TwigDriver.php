@@ -40,7 +40,7 @@ class TwigDriver extends BaseDriver
                 $this->engine = new \Twig_Environment( new \Twig_Loader_String() );
             } else {
                 throw new BadThirdPartyException(
-                    'E_PARSER_THIRD_PARTY',
+                    'PARSER_E_THIRD_PARTY',
                     0,
                     [ 'Twig Template Engine by Sensio Labs', 'http://twig.sensiolabs.org/' ]
                 );

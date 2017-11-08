@@ -40,7 +40,7 @@ class SmartyDriver extends BaseDriver
                 $this->engine = new \Smarty();
             } else {
                 throw new BadThirdPartyException(
-                    'E_PARSER_THIRD_PARTY',
+                    'PARSER_E_THIRD_PARTY',
                     0,
                     [ 'Smarty Template Engine by New Digital Group, Inc', 'http://www.smarty.net/' ]
                 );
