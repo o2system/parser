@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Engines;
@@ -68,50 +69,97 @@ class Blade extends AbstractEngine implements ParserEngineInterface
      */
     private $sections = [];
 
-    public function __construct( array $config = [] )
+    public function __construct(array $config = [])
     {
-        $this->config = array_merge( $this->config, $config );
+        $this->config = array_merge($this->config, $config);
     }
 
-    public function parseString( $string, array $vars = [] )
+    public function parseString($string, array $vars = [])
     {
         $this->vars =& $vars;
 
         // Collect sections with no closing
-        $string = preg_replace_callback( '/@section((.*),(.*))/', [ &$this, 'collectSection' ], $string );
+        $string = preg_replace_callback('/@section((.*),(.*))/', [&$this, 'collectSection'], $string);
 
         // Collect sections with @show closing
         $string = preg_replace_callback(
             '/@section(.*)\s+(.*)\s+@show/',
-            [ &$this, 'collectSectionWithShow' ],
+            [&$this, 'collectSectionWithShow'],
             $string
         );
 
         // Collect sections with @endsection closing
         $string = preg_replace_callback(
             '/@section(.*)\s+(.*)\s+@endsection/',
-            [ &$this, 'collectSectionWithEnd' ],
+            [&$this, 'collectSectionWithEnd'],
+            $string
+        );
+
+        // Collect sections with @stop closing
+        $string = preg_replace_callback(
+            '/@section(.*)\s+(.*)\s+@stop/',
+            [&$this, 'collectSectionWithEnd'],
+            $string
+        );
+
+        // Collect sections with @overwrite closing
+        $string = preg_replace_callback(
+            '/@section(.*)\s+(.*)\s+@overwrite/',
+            [&$this, 'collectSectionWithEnd'],
             $string
         );
 
         // Collect sections with @parent
         $string = preg_replace_callback(
             '/@section(.*)\s+@parent\s+(.*)\s+@endsection/',
-            [ &$this, 'collectSectionWithParent' ],
+            [&$this, 'collectSectionWithParent'],
             $string
         );
 
         // Remove blank lines
-        $string = preg_replace( "/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $string );
+        $string = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $string);
 
-        return $this->replaceString( $string );
+        return $this->replaceString($string);
     }
 
-    private function replaceString( $string )
+    public function parsePartials($filename, $vars = null, $optionalFilename = null)
     {
-        if ( $this->config[ 'allowPhpGlobals' ] === false ) {
+        if (empty($vars)) {
+            if (isset($optionalFilename)) {
+                return $this->parseFile($optionalFilename);
+            }
+        } else {
+            return $this->parseFile($filename, $vars);
+        }
+
+        return null;
+    }
+
+    private function replaceString($string)
+    {
+        if ($this->config[ 'allowPhpGlobals' ] === false) {
             $string = str_replace(
                 [
+                    '{{$GLOBALS}}',
+                    '{{$GLOBALS[%%]}}',
+                    '{{$_SERVER}}',
+                    '{{$_SERVER[%%]}}',
+                    '{{$_GET}}',
+                    '{{$_GET[%%]}}',
+                    '{{$_POST}}',
+                    '{{$_POST[%%]}}',
+                    '{{$_FILES}}',
+                    '{{$_FILES[%%]}}',
+                    '{{$_COOKIE}}',
+                    '{{$_COOKIE[%%]}}',
+                    '{{$_SESSION}}',
+                    '{{$_SESSION[%%]}}',
+                    '{{$_REQUEST}}',
+                    '{{$_REQUEST[%%]}}',
+                    '{{$_ENV}}',
+                    '{{$_ENV[%%]}}',
+
+                    // with spaces
                     '{{ $GLOBALS }}',
                     '{{ $GLOBALS[%%] }}',
                     '{{ $GLOBALS.%% }}',
@@ -147,83 +195,140 @@ class Blade extends AbstractEngine implements ParserEngineInterface
 
         // php logical codes
         $logicalCodes = [
-            '@if (%%)'     => '<?php if(\1): ?>',
-            '@elseif (%%)' => '<?php elseif(\1): ?>',
-            '@endif'       => '<?php endif; ?>',
-            '@else'        => '<?php else: ?>',
-            '@unless (%%)' => '<?php if(\1): ?>',
-            '@endunless'   => '<?php endif; ?>',
+            '@if(%%)'        => '<?php if(\1): ?>',
+            '@elseif(%%)'    => '<?php elseif(\1): ?>',
+            '@endif'         => '<?php endif; ?>',
+            '@else'          => '<?php else: ?>',
+            '@unless(%%)'    => '<?php if(\1): ?>',
+            '@endunless'     => '<?php endif; ?>',
+
+            // with spaces
+            '@if( %% )'      => '<?php if(\1): ?>',
+            '@elseif( %% )'  => '<?php elseif(\1): ?>',
+            '@unless( %% )'  => '<?php if(\1): ?>',
+            '@if (%%)'       => '<?php if(\1): ?>',
+            '@elseif (%%)'   => '<?php elseif(\1): ?>',
+            '@unless (%%)'   => '<?php if(\1): ?>',
+            '@if ( %% )'     => '<?php if(\1): ?>',
+            '@elseif ( %% )' => '<?php elseif(\1): ?>',
+            '@unless ( %% )' => '<?php if(\1): ?>',
         ];
 
         // php loop codes
         $loopCodes = [
-            '@foreach (%%)' => '<?php foreach(\1): ?>',
+            '@foreach(%%)'  => '<?php foreach(\1): ?>',
             '@endforeach'   => '<?php endforeach; ?>',
-            '@for (%%)'     => '<?php for(\1): ?>',
+            '@for(%%)'      => '<?php for(\1): ?>',
             '@endfor'       => '<?php endfor; ?>',
-            '@while (%%)'   => '<?php while(\1): ?>',
+            '@while(%%)'    => '<?php while(\1): ?>',
             '@endwhile'     => '<?php endwhile; ?>',
             '@continue'     => '<?php continue; ?>',
             '@break'        => '<?php break; ?>',
+
+            // with spaces
+            '@foreach (%%)' => '<?php foreach(\1): ?>',
+            '@for (%%)'     => '<?php for(\1): ?>',
+            '@while (%%)'   => '<?php while(\1): ?>',
         ];
 
         // php function codes
         $functionsCodes = [
-            '@include(%%)'     => '<?php echo $this->parseFile(\1); ?>',
-            '@include(%%, %%)' => '<?php echo $this->parseFile(\1, \2); ?>',
-            '@yield(%%)'       => '<?php echo $this->sections[\1]; ?>',
+            '@lang(%%)'           => '<?php echo $language->getLine(\1); ?>',
+            '@include(%%)'        => '<?php echo $this->parseFile(\1); ?>',
+            '@include(%%, %%)'    => '<?php echo $this->parseFile(\1, \2); ?>',
+            '@yield(%%)'          => '<?php echo $this->sections[\1]; ?>',
+            '@each(%%, %%, %%)'   => '<?php echo $this->parsePartials(\1, \2, \3); ?>',
+            '@extends(%%)'        => '@extends not supported',
+            '@choice(%%,%%)'      => '@choice not supported',
+
+            // with spaces
+            '@lang (%%)'          => '<?php echo $language->getLine(\1); ?>',
+            '@include (%%)'       => '<?php echo $this->parseFile(\1); ?>',
+            '@include (%%, %%)'   => '<?php echo $this->parseFile(\1, \2); ?>',
+            '@yield (%%)'         => '<?php echo $this->sections[\1]; ?>',
+            '@each (%%, %%, %%)'  => '<?php echo $this->parsePartials(\1, \2, \3); ?>',
+            '@extends (%%)'       => '@extends not supported',
+            '@choice (%%,%%)'     => '@choice not supported',
+            '@lang( %% )'         => '<?php echo $language->getLine(\1); ?>',
+            '@include( %% )'      => '<?php echo $this->parseFile(\1); ?>',
+            '@include( %%, %% )'  => '<?php echo $this->parseFile(\1, \2); ?>',
+            '@yield( %% )'        => '<?php echo $this->sections[\1]; ?>',
+            '@each( %%, %%, %% )' => '<?php echo $this->parsePartials(\1, \2, \3); ?>',
+            '@extends( %% )'      => '@extends not supported',
+            '@choice( %%,%% )'    => '@choice not supported',
         ];
 
-        if ( $this->config[ 'allowPhpFunctions' ] === false ) {
+        if ($this->config[ 'allowPhpFunctions' ] === false) {
             $functionsCodes[ '@%%(%%)' ] = '';
-        } elseif ( is_array( $this->config[ 'allowPhpFunctions' ] ) AND count(
+        } elseif (is_array($this->config[ 'allowPhpFunctions' ]) AND count(
                 $this->config[ 'allowPhpFunctions' ]
             ) > 0
         ) {
-            foreach ( $this->config[ 'allowPhpFunctions' ] as $functionName ) {
+            foreach ($this->config[ 'allowPhpFunctions' ] as $functionName) {
                 $functionsCodes[ '@' . $functionName . '(%%)' ] = '<?php echo ' . $functionName . '(\1); ?>';
             }
         }
 
         // php variables codes
         $variablesCodes = [
-            '{{ $%%->%% }}'  => '<?php echo $\1->\2; ?>',
-            '{{ $%%[%%] }}'  => '<?php echo $\1[\2]; ?>',
-            '{{ $%%.%% }}'   => '<?php echo $\1[\'\2\']; ?>',
-            '{{ $%% = %% }}' => '<?php $\1 = \2; ?>',
-            '{{ $%%++ }}'    => '<?php $\1++; ?>',
-            '{{ $%%-- }}'    => '<?php $\1--; ?>',
-            '{{ $%% }}'      => '<?php echo $\1; ?>',
-            '{{ /* }}'       => '<?php /*',
-            '{{ */ }}'       => '*/ ?>',
-            '{{ %% or %% }}' => '<?php echo ( empty(\1) ? \'\2\' : $\1 ); ?>',
-            '{{ %% }}'       => '<?php echo (\1); ?>',
-            '{!! $%% !!}'    => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
-            '{{-- %% --}}'   => '',
+            '{{%% ? %% : %%}}'   => '<?php echo (\1 ? \2 : \3); ?>',
+            '{{%% or %%}}'       => '<?php echo ( empty(\1) ? \2 : \1 ); ?>',
+            '{{%% || %%}}'       => '<?php echo ( empty(\1) ? \2 : \1 ); ?>',
+            '{{$%%->%%(%%)}}'    => '<?php echo $\1->\2(\3); ?>',
+            '{{$%%->%%}}'        => '<?php echo @$\1->\2; ?>',
+            '{{$%%[%%]}}'        => '<?php echo @$\1[\2]; ?>',
+            '{{$%%.%%}}'         => '<?php echo @$\1[\2]; ?>',
+            '{{$%% = %%}}'       => '<?php $\1 = \2; ?>',
+            '{{$%%++}}'          => '<?php $\1++; ?>',
+            '{{$%%--}}'          => '<?php $\1--; ?>',
+            '{{$%%}}'            => '<?php echo (!empty($\1) ? $\1 : ""); ?>',
+            '{{/*}}'             => '<?php /*',
+            '{{*/}}'             => '*/ ?>',
+            '{{%%}}'             => '<?php echo (\1); ?>',
+            '{{!! $%% !!}}'      => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
+            '{{-- %% --}}'       => '',
+
+            // with spaces
+            '{{ %% ? %% : %% }}' => '<?php echo (\1 ? \2 : \3); ?>',
+            '{{ %% or %% }}'     => '<?php echo ( empty(\1) ? \2 : \1 ); ?>',
+            '{{ %% || %% }}'     => '<?php echo ( empty(\1) ? \2 : \1 ); ?>',
+            '{{ $%%->%%(%%) }}'  => '<?php echo $\1->\2(\3); ?>',
+            '{{ $%%->%% }}'      => '<?php echo @$\1->\2; ?>',
+            '{{ $%%[%%] }}'      => '<?php echo @$\1[\2]; ?>',
+            '{{ $%%.%% }}'       => '<?php echo @$\1[\2]; ?>',
+            '{{ $%% = %% }}'     => '<?php $\1 = \2; ?>',
+            '{{ $%%++ }}'        => '<?php $\1++; ?>',
+            '{{ $%%-- }}'        => '<?php $\1--; ?>',
+            '{{ $%% }}'          => '<?php echo (!empty($\1) ? $\1 : ""); ?>',
+            '{{ /* }}'           => '<?php /*',
+            '{{ */ }}'           => '*/ ?>',
+            '{{ %% }}'           => '<?php echo (\1); ?>',
+            '{{!! $%% !!}}'      => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
+            '{{-- %% --}}'       => '',
         ];
 
-        if ( $this->config[ 'allowPhpConstants' ] === true ) {
-            $constantsVariables = get_defined_constants( true );
+        if ($this->config[ 'allowPhpConstants' ] === true) {
+            $constantsVariables = get_defined_constants(true);
 
-            if ( ! empty( $constantsVariables[ 'user' ] ) ) {
-                foreach ( $constantsVariables[ 'user' ] as $constant => $value ) {
+            if ( ! empty($constantsVariables[ 'user' ])) {
+                foreach ($constantsVariables[ 'user' ] as $constant => $value) {
                     $variablesCodes[ '{{ ' . $constant . ' }}' ] = '<?php echo ' . $constant . '; ?>';
                 }
             }
         }
 
-        $phpCodes = array_merge( $logicalCodes, $loopCodes, $functionsCodes, $variablesCodes );
+        $phpCodes = array_merge($logicalCodes, $loopCodes, $functionsCodes, $variablesCodes);
 
         $patterns = $replace = [];
-        foreach ( $phpCodes as $tplCode => $phpCode ) {
-            $patterns[] = '#' . str_replace( '%%', '(.+)', preg_quote( $tplCode, '#' ) ) . '#U';
+        foreach ($phpCodes as $tplCode => $phpCode) {
+            $patterns[] = '#' . str_replace('%%', '(.+)', preg_quote($tplCode, '#')) . '#U';
             $replace[] = $phpCode;
         }
 
         /*replace our pseudo language in template with php code*/
-        $string = preg_replace( $patterns, $replace, $string );
+        $string = preg_replace($patterns, $replace, $string);
 
-        extract( $this->vars );
+        extract($this->vars);
 
         /*
          * Buffer the output
@@ -238,7 +343,7 @@ class Blade extends AbstractEngine implements ParserEngineInterface
          */
         ob_start();
 
-        echo eval( '?>' . preg_replace( '/;*\s*\?>/', '; ?>', $string ) );
+        echo eval('?>' . preg_replace('/;*\s*\?>/', '; ?>', $string));
 
         $output = ob_get_contents();
         @ob_end_clean();
@@ -246,41 +351,41 @@ class Blade extends AbstractEngine implements ParserEngineInterface
         return $output;
     }
 
-    private function collectSection( $match )
+    private function collectSection($match)
     {
-        $section = str_replace( [ '\'', '(', ')' ], '', trim( $match[ 1 ] ) );
-        $xSection = explode( ',', $section );
-        $xSection = array_map( 'trim', $xSection );
+        $section = str_replace(['\'', '(', ')'], '', trim($match[ 1 ]));
+        $xSection = explode(',', $section);
+        $xSection = array_map('trim', $xSection);
 
-        $this->sections[ $xSection[ 0 ] ] = $this->replaceString( $xSection[ 1 ] );
+        $this->sections[ $xSection[ 0 ] ] = $this->replaceString($xSection[ 1 ]);
 
         return null;
     }
 
-    private function collectSectionWithShow( $match )
+    private function collectSectionWithShow($match)
     {
-        $offset = str_replace( [ '(\'', '\')' ], '', trim( $match[ 1 ] ) );
-        $this->sections[ $offset ] = $this->replaceString( $match[ 2 ] );
+        $offset = str_replace(['(\'', '\')'], '', trim($match[ 1 ]));
+        $this->sections[ $offset ] = $this->replaceString($match[ 2 ]);
 
         return '@yield(\'' . $offset . '\')';
     }
 
-    private function collectSectionWithEnd( $match )
+    private function collectSectionWithEnd($match)
     {
-        $offset = str_replace( [ '(\'', '\')' ], '', trim( $match[ 1 ] ) );
-        $content = trim( $match[ 2 ] );
+        $offset = str_replace(['(\'', '\')'], '', trim($match[ 1 ]));
+        $content = trim($match[ 2 ]);
 
-        $this->sections[ $offset ] = $this->replaceString( $content );
+        $this->sections[ $offset ] = $this->replaceString($content);
 
         return null;
     }
 
-    private function collectSectionWithParent( $match )
+    private function collectSectionWithParent($match)
     {
-        $offset = str_replace( [ '(\'', '\')' ], '', trim( $match[ 1 ] ) );
-        $content = $this->replaceString( $match[ 2 ] );
+        $offset = str_replace(['(\'', '\')'], '', trim($match[ 1 ]));
+        $content = $this->replaceString($match[ 2 ]);
 
-        if ( isset( $this->sections[ $offset ] ) ) {
+        if (isset($this->sections[ $offset ])) {
             $this->sections[ $offset ] .= PHP_EOL . $content;
         } else {
             $this->sections[ $offset ] = $content;

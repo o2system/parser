@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Engines;
@@ -56,16 +57,16 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
      *
      * @param array $config
      */
-    public function __construct( array $config = [] )
+    public function __construct(array $config = [])
     {
-        $this->config = array_merge( $this->config, $config );
+        $this->config = array_merge($this->config, $config);
     }
 
     // ------------------------------------------------------------------------
 
-    public function parseString( $string, array $vars = [] )
+    public function parseString($string, array $vars = [])
     {
-        if ( $this->config[ 'allowPhpGlobals' ] === false ) {
+        if ($this->config[ 'allowPhpGlobals' ] === false) {
             $string = str_replace(
                 [
                     '{{$GLOBALS}}',
@@ -86,6 +87,26 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
                     '{{$_REQUEST[%%]}}',
                     '{{$_ENV}}',
                     '{{$_ENV[%%]}}',
+
+                    // with spaces
+                    '{{ $GLOBALS }}',
+                    '{{ $GLOBALS[%%] }}',
+                    '{{ $_SERVER }}',
+                    '{{ $_SERVER[%%] }}',
+                    '{{ $_GET }}',
+                    '{{ $_GET[%%] }}',
+                    '{{ $_POST }}',
+                    '{{ $_POST[%%] }}',
+                    '{{ $_FILES }}',
+                    '{{ $_FILES[%%] }}',
+                    '{{ $_COOKIE }}',
+                    '{{ $_COOKIE[%%] }}',
+                    '{{ $_SESSION }}',
+                    '{{ $_SESSION[%%] }}',
+                    '{{ $_REQUEST }}',
+                    '{{ $_REQUEST[%%] }}',
+                    '{{ $_ENV }}',
+                    '{{ $_ENV[%%] }}',
                 ],
                 '',
                 $string
@@ -94,36 +115,60 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
 
         // php logical codes
         $logicalCodes = [
-            '{{if(%%)}}'     => '<?php if(\1): ?>',
-            '{{elseif(%%)}}' => '<?php elseif(\1): ?>',
-            '{{/if}}'        => '<?php endif; ?>',
-            '{{else}}'       => '<?php else: ?>',
+            '{{if(%%)}}'       => '<?php if(\1): ?>',
+            '{{elseif(%%)}}'   => '<?php elseif(\1): ?>',
+            '{{/if}}'          => '<?php endif; ?>',
+            '{{endif}}'        => '<?php endif; ?>',
+            '{{else}}'         => '<?php else: ?>',
+
+            // with spaces
+            '{{ if(%%) }}'     => '<?php if(\1): ?>',
+            '{{ elseif(%%) }}' => '<?php elseif(\1): ?>',
+            '{{ /if }}'        => '<?php endif; ?>',
+            '{{ endif }}'      => '<?php endif; ?>',
+            '{{ else }}'       => '<?php else: ?>',
         ];
 
         // php loop codes
         $loopCodes = [
-            '{{for(%%)}}'     => '<?php for(\1): ?>',
-            '{{/for}}'        => '<?php endfor; ?>',
-            '{{foreach(%%)}}' => '<?php foreach(\1): ?>',
-            '{{/foreach}}'    => '<?php endforeach; ?>',
-            '{{while(%%)}}'   => '<?php while(\1): ?>',
-            '{{/while}}'      => '<?php endwhile; ?>',
-            '{{continue}}'    => '<?php continue; ?>',
-            '{{break}}'       => '<?php break; ?>',
+            '{{for(%%)}}'       => '<?php for(\1): ?>',
+            '{{/for}}'          => '<?php endfor; ?>',
+            '{{endfor}}'        => '<?php endfor; ?>',
+            '{{foreach(%%)}}'   => '<?php foreach(\1): ?>',
+            '{{/foreach}}'      => '<?php endforeach; ?>',
+            '{{endforeach}}'    => '<?php endforeach; ?>',
+            '{{while(%%)}}'     => '<?php while(\1): ?>',
+            '{{/while}}'        => '<?php endwhile; ?>',
+            '{{endwhile}}'      => '<?php endwhile; ?>',
+            '{{continue}}'      => '<?php continue; ?>',
+            '{{break}}'         => '<?php break; ?>',
+
+            // with spaces
+            '{{ for(%%) }}'     => '<?php for(\1): ?>',
+            '{{ /for }}'        => '<?php endfor; ?>',
+            '{{ endfor }}'      => '<?php endfor; ?>',
+            '{{ foreach(%%) }}' => '<?php foreach(\1): ?>',
+            '{{ /foreach }}'    => '<?php endforeach; ?>',
+            '{{ endforeach }}'  => '<?php endforeach; ?>',
+            '{{ while(%%) }}'   => '<?php while(\1): ?>',
+            '{{ /while }}'      => '<?php endwhile; ?>',
+            '{{ endwhile }}'    => '<?php endwhile; ?>',
+            '{{ continue }}'    => '<?php continue; ?>',
+            '{{ break }}'       => '<?php break; ?>',
         ];
 
         // php function codes
         $functionsCodes = [];
-        if ( $this->config[ 'allowPhpFunctions' ] === false ) {
+        if ($this->config[ 'allowPhpFunctions' ] === false) {
             $functionsCodes = [
                 '{{%%(%%)}}' => '',
             ];
-        } elseif ( is_array( $this->config[ 'allowPhpFunctions' ] ) AND count(
+        } elseif (is_array($this->config[ 'allowPhpFunctions' ]) AND count(
                 $this->config[ 'allowPhpFunctions' ]
             ) > 0
         ) {
-            foreach ( $this->config[ 'allowPhpFunctions' ] as $function_name ) {
-                if( function_exists( $function_name ) ) {
+            foreach ($this->config[ 'allowPhpFunctions' ] as $function_name) {
+                if (function_exists($function_name)) {
                     $functionsCodes[ '{{' . $function_name . '(%%)}}' ] = '<?php echo ' . $function_name . '(\1); ?>';
                 }
             }
@@ -136,45 +181,64 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
 
         // php variables codes
         $variablesCodes = [
-            '{{$%%->%%(%%)}}' => '<?php echo $\1->\2(\3); ?>',
-            '{{$%%->%%}}'     => '<?php echo $\1->\2; ?>',
-            '{{$%%[%%]}}'     => '<?php echo $\1[\'\2\']; ?>',
-            '{{$%%.%%}}'      => '<?php echo $\1[\'\2\']; ?>',
-            '{{$%% = %%}}'    => '<?php $\1 = \2; ?>',
-            '{{$%%++}}'       => '<?php $\1++; ?>',
-            '{{$%%--}}'       => '<?php $\1--; ?>',
-            '{{$%%}}'         => '<?php echo $\1; ?>',
-            '{{/*}}'          => '<?php /*',
-            '{{*/}}'          => '*/ ?>',
-            '{{ %% OR %% }}'  => '<?php echo ( empty(\1) ? \'\2\' : $\1 ); ?>',
-            '{{!!$%%!!}}'     => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
-            '{{--%%--}}'      => '',
+            '{{%% ? %% : %%}}'    => '<?php echo (\1 ? \2 : \3); ?>',
+            '{{%% or %%}}'        => '<?php echo ( empty(\1) ? \2 : \1 ); ?>',
+            '{{%% || %%}}'        => '<?php echo ( empty(\1) ? \2 : \1 ); ?>',
+            '{{$%%->%%(%%)}}'     => '<?php echo $\1->\2(\3); ?>',
+            '{{$%%->%%}}'         => '<?php echo @$\1->\2; ?>',
+            '{{$%%[%%]}}'         => '<?php echo @$\1->\2; ?>',
+            '{{$%%.%%}}'          => '<?php echo @$\1->\2; ?>',
+            '{{$%% = %%}}'        => '<?php $\1 = \2; ?>',
+            '{{$%%++}}'           => '<?php $\1++; ?>',
+            '{{$%%--}}'           => '<?php $\1--; ?>',
+            '{{$%%}}'             => '<?php echo (isset($\1) ? $\1 : ""); ?>',
+            '{{/*}}'              => '<?php /*',
+            '{{*/}}'              => '*/ ?>',
+            '{{!!$%%!!}}'         => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
+            '{{--%%--}}'          => '',
+
+            // with spaces
+            '{{ %% ? %% : %% }}'  => '<?php echo (\1 ? \2 : \3); ?>',
+            '{{ %% or %% }}'      => '<?php echo ( empty(\1) ? \'\2\' : \1 ); ?>',
+            '{{ %% || %% }}'      => '<?php echo ( empty(\1) ? \'\2\' : \1 ); ?>',
+            '{{ $%%->%%(%%) }}'   => '<?php echo $\1->\2(\3); ?>',
+            '{{ $%%->%% }}'       => '<?php echo @$\1->\2; ?>',
+            '{{ $%%[%%] }}'       => '<?php echo @$\1->\2; ?>',
+            '{{ $%%.%% }}'        => '<?php echo @$\1->\2; ?>',
+            '{{ $%% = %% }}'      => '<?php $\1 = \2; ?>',
+            '{{ $%%++ }}'         => '<?php $\1++; ?>',
+            '{{ $%%-- }}'         => '<?php $\1--; ?>',
+            '{{ $%% }}'           => '<?php echo (isset($\1) ? $\1 : ""); ?>',
+            '{{ /* }}'            => '<?php /*',
+            '{{ */ }}'            => '*/ ?>',
+            '{{ !!$%%!! }}'       => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
+            '{{ --%%-- }}'        => '',
         ];
 
-        if ( $this->config[ 'allowPhpConstants' ] === true ) {
-            $constantsVariables = get_defined_constants( true );
+        if ($this->config[ 'allowPhpConstants' ] === true) {
+            $constantsVariables = get_defined_constants(true);
 
-            if ( ! empty( $constantsVariables[ 'user' ] ) ) {
-                foreach ( $constantsVariables[ 'user' ] as $constant => $value ) {
-                    if( defined( $constant ) ) {
+            if ( ! empty($constantsVariables[ 'user' ])) {
+                foreach ($constantsVariables[ 'user' ] as $constant => $value) {
+                    if (defined($constant)) {
                         $variablesCodes[ '{{' . $constant . '}}' ] = '<?php echo ' . $constant . '; ?>';
                     }
                 }
             }
         }
 
-        $phpCodes = array_merge( $logicalCodes, $loopCodes, $variablesCodes, $functionsCodes );
+        $phpCodes = array_merge($logicalCodes, $loopCodes, $variablesCodes, $functionsCodes);
 
         $patterns = $replace = [];
-        foreach ( $phpCodes as $tplCode => $phpCode ) {
-            $patterns[] = '#' . str_replace( '%%', '(.+)', preg_quote( $tplCode, '#' ) ) . '#U';
+        foreach ($phpCodes as $tplCode => $phpCode) {
+            $patterns[] = '#' . str_replace('%%', '(.+)', preg_quote($tplCode, '#')) . '#U';
             $replace[] = $phpCode;
         }
 
         /*replace our pseudo language in template with php code*/
-        $string = preg_replace( $patterns, $replace, $string );
+        $string = preg_replace($patterns, $replace, $string);
 
-        extract( $vars );
+        extract($vars);
 
         /*
          * Buffer the output
@@ -190,12 +254,12 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
         ob_start();
 
         try {
-            echo @eval( '?>' . @preg_replace( '/;*\s*\?>/', '; ?>', $string ) );
-        } catch( \Exception $e ) {
-            throw new \Exception( $e->getMessage(), $e->getCode(), $e );
-            
+            echo @eval('?>' . @preg_replace('/;*\s*\?>/', '; ?>', $string));
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage(), $e->getCode(), $e);
+
         }
-        
+
 
         $output = ob_get_contents();
         @ob_end_clean();

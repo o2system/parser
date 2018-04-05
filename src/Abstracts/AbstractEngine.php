@@ -38,20 +38,24 @@ abstract class AbstractEngine implements ParserEngineInterface
      */
     public function parseFile( $filePath, array $vars = [] )
     {
-        $fileExtension = '.' . pathinfo( $filePath, PATHINFO_EXTENSION );
+        if(class_exists('O2System\Framework', false)) {
+            return view()->load($filePath, $vars, true);
+        } else {
+            $fileExtension = '.' . pathinfo( $filePath, PATHINFO_EXTENSION );
 
-        if ( in_array( $fileExtension, $this->fileExtensions ) AND is_file( $filePath ) ) {
-            return $this->parseString( file_get_contents( $filePath ), $vars );
-        }
+            if ( in_array( $fileExtension, $this->fileExtensions ) AND is_file( $filePath ) ) {
+                return $this->parseString( file_get_contents( $filePath ), $vars );
+            }
 
-        // Try to find from filePaths
-        if ( count( $this->filePaths ) ) {
-            foreach ( $this->filePaths as $fileDirectory ) {
-                $checkFilePath = $fileDirectory . $filePath;
+            // Try to find from filePaths
+            if ( count( $this->filePaths ) ) {
+                foreach ( $this->filePaths as $fileDirectory ) {
+                    $checkFilePath = $fileDirectory . $filePath;
 
-                if ( in_array( $fileExtension, $this->fileExtensions ) AND is_file( $checkFilePath ) ) {
-                    return $this->parseString( file_get_contents( $checkFilePath ), $vars );
-                    break;
+                    if ( in_array( $fileExtension, $this->fileExtensions ) AND is_file( $checkFilePath ) ) {
+                        return $this->parseString( file_get_contents( $checkFilePath ), $vars );
+                        break;
+                    }
                 }
             }
         }
