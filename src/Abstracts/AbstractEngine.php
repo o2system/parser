@@ -62,4 +62,19 @@ abstract class AbstractEngine implements ParserEngineInterface
 
         return null;
     }
+
+    // ------------------------------------------------------------------------
+
+    public function parsePartials($filename, $vars = null, $optionalFilename = null)
+    {
+        if (empty($vars)) {
+            if (isset($optionalFilename)) {
+                return $this->parseFile($optionalFilename);
+            }
+        } else {
+            return $this->parseFile($filename, $vars);
+        }
+
+        return null;
+    }
 }
