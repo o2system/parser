@@ -120,8 +120,6 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
             '{{/if}}'          => '<?php endif; ?>',
             '{{endif}}'        => '<?php endif; ?>',
             '{{else}}'         => '<?php else: ?>',
-            '{{unless(%%)}}'   => '<?php if(\1): ?>',
-            '{{endunless}}'    => '<?php endif; ?>',
 
             // with spaces
             '{{ if(%%) }}'     => '<?php if(\1): ?>',
@@ -129,8 +127,6 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
             '{{ /if }}'        => '<?php endif; ?>',
             '{{ endif }}'      => '<?php endif; ?>',
             '{{ else }}'       => '<?php else: ?>',
-            '{{ unless(%%) }}' => '<?php if(\1): ?>',
-            '{{ endunless }}'  => '<?php endif; ?>',
         ];
 
         // php loop codes
@@ -178,57 +174,45 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
             }
         } else {
             $functionsCodes = [
-                '{{%%()}}'               => '<?php echo \1(); ?>',
-                '{{%%(%%)}}'             => '<?php echo \1(\2); ?>',
-                '{{lang(%%)}}'           => '<?php echo $language->getLine(\1); ?>',
-                '{{each(%%, %%, %%)}}'   => '<?php echo $this->parsePartials(\1, \2, \3); ?>',
-                '{{include(%%)}}'        => '<?php echo $this->parseFile(\1); ?>',
-                '{{include(%%, %%)}}'    => '<?php echo $this->parseFile(\1, \2); ?>',
-
-                // with spaces
-                '{{ %%() }}'             => '<?php echo \1(); ?>',
-                '{{ %%(%%) }}'           => '<?php echo \1(\2); ?>',
-                '{{ lang(%%) }}'         => '<?php echo $language->getLine(\1); ?>',
-                '{{ each(%%, %%, %%) }}' => '<?php echo $this->parsePartials(\1, \2, \3); ?>',
-                '{{ include(%%) }}'      => '<?php echo $this->parseFile(\1); ?>',
-                '{{ include(%%, %%) }}'  => '<?php echo $this->parseFile(\1, \2); ?>',
+                '{{%%()}}'   => '<?php echo \1(); ?>',
+                '{{%%(%%)}}' => '<?php echo \1(\2); ?>',
             ];
         }
 
         // php variables codes
         $variablesCodes = [
-            '{{%% ? %% : %%}}'   => '<?php echo (\1 ? \2 : \3); ?>',
-            '{{%% or %%}}'       => '<?php echo ( empty(\1) ? \2 : \1 ); ?>',
-            '{{%% || %%}}'       => '<?php echo ( empty(\1) ? \2 : \1 ); ?>',
-            '{{$%%->%%(%%)}}'    => '<?php echo $\1->\2(\3); ?>',
-            '{{$%%->%%}}'        => '<?php echo @$\1->\2; ?>',
-            '{{$%%[%%]}}'        => '<?php echo @$\1->\2; ?>',
-            '{{$%%.%%}}'         => '<?php echo @$\1->\2; ?>',
-            '{{$%% = %%}}'       => '<?php $\1 = \2; ?>',
-            '{{$%%++}}'          => '<?php $\1++; ?>',
-            '{{$%%--}}'          => '<?php $\1--; ?>',
-            '{{$%%}}'            => '<?php echo (isset($\1) ? $\1 : ""); ?>',
-            '{{/*}}'             => '<?php /*',
-            '{{*/}}'             => '*/ ?>',
-            '{{!!$%%!!}}'        => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
-            '{{--%%--}}'         => '',
+            '{{%% ? %% : %%}}'    => '<?php echo (\1 ? \2 : \3); ?>',
+            '{{%% or %%}}'        => '<?php echo ( empty(\1) ? \2 : \1 ); ?>',
+            '{{%% || %%}}'        => '<?php echo ( empty(\1) ? \2 : \1 ); ?>',
+            '{{$%%->%%(%%)}}'     => '<?php echo $\1->\2(\3); ?>',
+            '{{$%%->%%}}'         => '<?php echo @$\1->\2; ?>',
+            '{{$%%[%%]}}'         => '<?php echo @$\1->\2; ?>',
+            '{{$%%.%%}}'          => '<?php echo @$\1->\2; ?>',
+            '{{$%% = %%}}'        => '<?php $\1 = \2; ?>',
+            '{{$%%++}}'           => '<?php $\1++; ?>',
+            '{{$%%--}}'           => '<?php $\1--; ?>',
+            '{{$%%}}'             => '<?php echo (isset($\1) ? $\1 : ""); ?>',
+            '{{/*}}'              => '<?php /*',
+            '{{*/}}'              => '*/ ?>',
+            '{{!!$%%!!}}'         => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
+            '{{--%%--}}'          => '',
 
             // with spaces
-            '{{ %% ? %% : %% }}' => '<?php echo (\1 ? \2 : \3); ?>',
-            '{{ %% or %% }}'     => '<?php echo ( empty(\1) ? \'\2\' : \1 ); ?>',
-            '{{ %% || %% }}'     => '<?php echo ( empty(\1) ? \'\2\' : \1 ); ?>',
-            '{{ $%%->%%(%%) }}'  => '<?php echo $\1->\2(\3); ?>',
-            '{{ $%%->%% }}'      => '<?php echo @$\1->\2; ?>',
-            '{{ $%%[%%] }}'      => '<?php echo @$\1->\2; ?>',
-            '{{ $%%.%% }}'       => '<?php echo @$\1->\2; ?>',
-            '{{ $%% = %% }}'     => '<?php $\1 = \2; ?>',
-            '{{ $%%++ }}'        => '<?php $\1++; ?>',
-            '{{ $%%-- }}'        => '<?php $\1--; ?>',
-            '{{ $%% }}'          => '<?php echo (isset($\1) ? $\1 : ""); ?>',
-            '{{ /* }}'           => '<?php /*',
-            '{{ */ }}'           => '*/ ?>',
-            '{{ !!$%%!! }}'      => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
-            '{{ --%%-- }}'       => '',
+            '{{ %% ? %% : %% }}'  => '<?php echo (\1 ? \2 : \3); ?>',
+            '{{ %% or %% }}'      => '<?php echo ( empty(\1) ? \'\2\' : \1 ); ?>',
+            '{{ %% || %% }}'      => '<?php echo ( empty(\1) ? \'\2\' : \1 ); ?>',
+            '{{ $%%->%%(%%) }}'   => '<?php echo $\1->\2(\3); ?>',
+            '{{ $%%->%% }}'       => '<?php echo @$\1->\2; ?>',
+            '{{ $%%[%%] }}'       => '<?php echo @$\1->\2; ?>',
+            '{{ $%%.%% }}'        => '<?php echo @$\1->\2; ?>',
+            '{{ $%% = %% }}'      => '<?php $\1 = \2; ?>',
+            '{{ $%%++ }}'         => '<?php $\1++; ?>',
+            '{{ $%%-- }}'         => '<?php $\1--; ?>',
+            '{{ $%% }}'           => '<?php echo (isset($\1) ? $\1 : ""); ?>',
+            '{{ /* }}'            => '<?php /*',
+            '{{ */ }}'            => '*/ ?>',
+            '{{ !!$%%!! }}'       => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
+            '{{ --%%-- }}'        => '',
         ];
 
         if ($this->config[ 'allowPhpConstants' ] === true) {
@@ -275,6 +259,7 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
             throw new \Exception($e->getMessage(), $e->getCode(), $e);
 
         }
+
 
         $output = ob_get_contents();
         @ob_end_clean();
