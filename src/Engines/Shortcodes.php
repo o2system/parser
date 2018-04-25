@@ -15,7 +15,7 @@ namespace O2System\Parser\Engines;
 // ------------------------------------------------------------------------
 
 use O2System\Psr\Parser\ParserEngineInterface;
-use O2System\Psr\Patterns\RegistryPatternClass;
+use O2System\Psr\Patterns\AbstractObjectRegistryPattern;
 use O2System\Spl\Traits\Collectors\FileExtensionCollectorTrait;
 use O2System\Spl\Traits\Collectors\FilePathCollectorTrait;
 
@@ -38,7 +38,7 @@ use O2System\Spl\Traits\Collectors\FilePathCollectorTrait;
  *
  * @package O2System\Parser\Engines
  */
-class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
+class Shortcodes extends AbstractObjectRegistryPattern implements ParserEngineInterface
 {
     use FileExtensionCollectorTrait;
     use FilePathCollectorTrait;
@@ -83,8 +83,8 @@ class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
     public function parseString( $source, array $vars = [] )
     {
         if ( count( $vars ) ) {
-            foreach ( $vars as $offset => $value ) {
-                $this->register( $offset, $value );
+            foreach ( $vars as $offset => $shortcode ) {
+                $this->register( $shortcode, $offset );
             }
         }
 
@@ -115,7 +115,9 @@ class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
      */
     private function getRegex()
     {
-        $offsetKeys = array_keys( $this->getArrayCopy() );
+        $shortcodes = $this->getIterator();
+
+        $offsetKeys = $shortcodes->getKeys();
         $offsetRegex = join( '|', array_map( 'preg_quote', $offsetKeys ) );
 
         // WARNING! Do not change this regex
@@ -161,9 +163,9 @@ class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
         }
 
         $offset = $match[ 2 ];
-        $attr = $this->parseRegexAttr( $match[ 3 ] );
+        $attr = $this->parseRegexAttributes( $match[ 3 ] );
 
-        if ( $this->has( $offset ) ) {
+        if ( $this->exists( $offset ) ) {
             if ( isset( $match[ 5 ] ) ) {
                 // enclosing tag - extra parameter
                 return $match[ 1 ] . call_user_func(
@@ -196,7 +198,7 @@ class Shortcodes extends RegistryPatternClass implements ParserEngineInterface
      *
      * @return array List of attributes and their value.
      */
-    private function parseRegexAttr( $string )
+    private function parseRegexAttributes( $string )
     {
         $attr = [];
         $pattern = '/(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/';

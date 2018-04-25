@@ -69,10 +69,14 @@ class Blade extends AbstractEngine implements ParserEngineInterface
      */
     private $sections = [];
 
+    // ------------------------------------------------------------------------
+
     public function __construct(array $config = [])
     {
         $this->config = array_merge($this->config, $config);
     }
+
+    // ------------------------------------------------------------------------
 
     public function parseString($string, array $vars = [])
     {
@@ -122,18 +126,7 @@ class Blade extends AbstractEngine implements ParserEngineInterface
         return $this->replaceString($string);
     }
 
-    public function parsePartials($filename, $vars = null, $optionalFilename = null)
-    {
-        if (empty($vars)) {
-            if (isset($optionalFilename)) {
-                return $this->parseFile($optionalFilename);
-            }
-        } else {
-            return $this->parseFile($filename, $vars);
-        }
-
-        return null;
-    }
+    // ------------------------------------------------------------------------
 
     private function replaceString($string)
     {
@@ -303,8 +296,6 @@ class Blade extends AbstractEngine implements ParserEngineInterface
             '{{ /* }}'           => '<?php /*',
             '{{ */ }}'           => '*/ ?>',
             '{{ %% }}'           => '<?php echo (\1); ?>',
-            '{{!! $%% !!}}'      => '<?php echo htmlentities($\1, ENT_HTML5); ?>',
-            '{{-- %% --}}'       => '',
         ];
 
         if ($this->config[ 'allowPhpConstants' ] === true) {
@@ -351,6 +342,8 @@ class Blade extends AbstractEngine implements ParserEngineInterface
         return $output;
     }
 
+    // ------------------------------------------------------------------------
+
     private function collectSection($match)
     {
         $section = str_replace(['\'', '(', ')'], '', trim($match[ 1 ]));
@@ -362,6 +355,8 @@ class Blade extends AbstractEngine implements ParserEngineInterface
         return null;
     }
 
+    // ------------------------------------------------------------------------
+
     private function collectSectionWithShow($match)
     {
         $offset = str_replace(['(\'', '\')'], '', trim($match[ 1 ]));
@@ -369,6 +364,8 @@ class Blade extends AbstractEngine implements ParserEngineInterface
 
         return '@yield(\'' . $offset . '\')';
     }
+
+    // ------------------------------------------------------------------------
 
     private function collectSectionWithEnd($match)
     {
@@ -379,6 +376,8 @@ class Blade extends AbstractEngine implements ParserEngineInterface
 
         return null;
     }
+
+    // ------------------------------------------------------------------------
 
     private function collectSectionWithParent($match)
     {
