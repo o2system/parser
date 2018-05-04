@@ -15,7 +15,8 @@ namespace O2System\Parser\Engines;
 // ------------------------------------------------------------------------
 
 use O2System\Psr\Parser\ParserEngineInterface;
-use O2System\Psr\Patterns\AbstractObjectRegistryPattern;
+use O2System\Psr\Patterns\Structural\Provider\AbstractProvider;
+use O2System\Psr\Patterns\Structural\Provider\ValidationInterface;
 use O2System\Spl\Traits\Collectors\FileExtensionCollectorTrait;
 use O2System\Spl\Traits\Collectors\FilePathCollectorTrait;
 
@@ -38,7 +39,9 @@ use O2System\Spl\Traits\Collectors\FilePathCollectorTrait;
  *
  * @package O2System\Parser\Engines
  */
-class Shortcodes extends AbstractObjectRegistryPattern implements ParserEngineInterface
+class Shortcodes extends AbstractProvider implements
+    ValidationInterface,
+    ParserEngineInterface
 {
     use FileExtensionCollectorTrait;
     use FilePathCollectorTrait;
@@ -127,13 +130,13 @@ class Shortcodes extends AbstractObjectRegistryPattern implements ParserEngineIn
     // ------------------------------------------------------------------------
 
     /**
-     * Shortcodes::isValid
+     * Shortcodes::validate
      *
      * @param mixed $value
      *
      * @return bool
      */
-    protected function isValid( $value )
+    public function validate( $value )
     {
         return (bool)is_callable( $value );
     }

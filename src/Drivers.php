@@ -17,14 +17,15 @@ namespace O2System\Parser;
 
 use O2System\Psr\Parser\ParserDriverInterface;
 use O2System\Psr\Parser\ParserEngineInterface;
-use O2System\Psr\Patterns\AbstractObjectRegistryPattern;
+use O2System\Psr\Patterns\Structural\Provider\AbstractProvider;
+use O2System\Psr\Patterns\Structural\Provider\ValidationInterface;
 
 /**
  * Class Drivers
  *
  * @package O2System\Parser
  */
-class Drivers extends AbstractObjectRegistryPattern
+class Drivers extends AbstractProvider implements ValidationInterface
 {
     /**
      * Compiler Config
@@ -265,7 +266,7 @@ class Drivers extends AbstractObjectRegistryPattern
      *
      * @return bool
      */
-    protected function isValid($value)
+    public function validate($value)
     {
         if ($value instanceof ParserDriverInterface) {
             return true;
