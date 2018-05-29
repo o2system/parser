@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Drivers;
@@ -33,17 +34,17 @@ class BBCodeDriver extends BaseDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize( array $config )
+    public function initialize(array $config)
     {
-        if ( empty( $this->engine ) ) {
-            if ( $this->isSupported() ) {
+        if (empty($this->engine)) {
+            if ($this->isSupported()) {
                 $this->engine = new \JBBCode\Parser();
-                $this->engine->addCodeDefinitionSet( new \JBBCode\DefaultCodeDefinitionSet() );
+                $this->engine->addCodeDefinitionSet(new \JBBCode\DefaultCodeDefinitionSet());
             } else {
                 throw new BadThirdPartyException(
                     'PARSER_E_THIRD_PARTY',
                     0,
-                    [ 'BBCode Parser by Jackson Owens', 'https://github.com/jbowens/jBBCode' ]
+                    ['BBCode Parser by Jackson Owens', 'https://github.com/jbowens/jBBCode']
                 );
             }
         }
@@ -62,7 +63,7 @@ class BBCodeDriver extends BaseDriver
      */
     public function isSupported()
     {
-        if ( class_exists( '\JBBCode\Parser' ) ) {
+        if (class_exists('\JBBCode\Parser')) {
             return true;
         }
 
@@ -78,9 +79,9 @@ class BBCodeDriver extends BaseDriver
      *
      * @return string
      */
-    public function parse( array $vars = [] )
+    public function parse(array $vars = [])
     {
-        $this->engine->parse( $this->string );
+        $this->engine->parse($this->string);
 
         return $this->engine->getAsHtml();
     }
@@ -96,9 +97,9 @@ class BBCodeDriver extends BaseDriver
      *
      * @return bool
      */
-    protected function isValidEngine( $engine )
+    protected function isValidEngine($engine)
     {
-        if ( $engine instanceof \JBBCode\Parser ) {
+        if ($engine instanceof \JBBCode\Parser) {
             return true;
         }
 

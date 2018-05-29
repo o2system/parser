@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Drivers;
@@ -33,16 +34,16 @@ class DwooDriver extends BaseDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize( array $config )
+    public function initialize(array $config)
     {
-        if ( empty( $this->engine ) ) {
-            if ( $this->isSupported() ) {
+        if (empty($this->engine)) {
+            if ($this->isSupported()) {
                 $this->engine = new \Dwoo();
             } else {
                 throw new BadThirdPartyException(
                     'PARSER_E_THIRD_PARTY',
                     0,
-                    [ 'BBCode Parser by Jackson Owens', 'https://github.com/jbowens/jBBCode' ]
+                    ['BBCode Parser by Jackson Owens', 'https://github.com/jbowens/jBBCode']
                 );
             }
         }
@@ -61,7 +62,7 @@ class DwooDriver extends BaseDriver
      */
     public function isSupported()
     {
-        if ( class_exists( '\Dwoo' ) ) {
+        if (class_exists('\Dwoo')) {
             return true;
         }
 
@@ -77,9 +78,9 @@ class DwooDriver extends BaseDriver
      *
      * @return string
      */
-    public function parse( array $vars = [] )
+    public function parse(array $vars = [])
     {
-        return $this->engine->get( new \Dwoo_Template_String( $this->string ), $vars );
+        return $this->engine->get(new \Dwoo_Template_String($this->string), $vars);
     }
 
     // ------------------------------------------------------------------------
@@ -93,9 +94,9 @@ class DwooDriver extends BaseDriver
      *
      * @return bool
      */
-    protected function isValidEngine( $engine )
+    protected function isValidEngine($engine)
     {
-        if ( $engine instanceof \Dwoo ) {
+        if ($engine instanceof \Dwoo) {
             return true;
         }
 

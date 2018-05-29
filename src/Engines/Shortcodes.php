@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Engines;
@@ -54,17 +55,17 @@ class Shortcodes extends AbstractProvider implements
      *
      * @return string
      */
-    public function parseFile( $filePath, array $vars = [] )
+    public function parseFile($filePath, array $vars = [])
     {
-        if ( is_file( $filePath ) ) {
-            return $this->parseString( file_get_contents( $filePath ), $vars );
+        if (is_file($filePath)) {
+            return $this->parseString(file_get_contents($filePath), $vars);
         }
 
         // Try to find from filePaths
-        if ( count( $this->filePaths ) ) {
-            foreach ( $this->filePaths as $fileDirectory ) {
-                if ( is_file( $fileDirectory . $filePath ) ) {
-                    return $this->parseString( file_get_contents( $fileDirectory . $filePath ), $vars );
+        if (count($this->filePaths)) {
+            foreach ($this->filePaths as $fileDirectory) {
+                if (is_file($fileDirectory . $filePath)) {
+                    return $this->parseString(file_get_contents($fileDirectory . $filePath), $vars);
                     break;
                 }
             }
@@ -83,17 +84,17 @@ class Shortcodes extends AbstractProvider implements
      *
      * @return mixed
      */
-    public function parseString( $source, array $vars = [] )
+    public function parseString($source, array $vars = [])
     {
-        if ( count( $vars ) ) {
-            foreach ( $vars as $offset => $shortcode ) {
-                $this->register( $shortcode, $offset );
+        if (count($vars)) {
+            foreach ($vars as $offset => $shortcode) {
+                $this->register($shortcode, $offset);
             }
         }
 
         $pattern = $this->getRegex();
 
-        return preg_replace_callback( '/' . $pattern . '/s', [ &$this, 'parseRegex' ], $source );
+        return preg_replace_callback('/' . $pattern . '/s', [&$this, 'parseRegex'], $source);
     }
 
     // ------------------------------------------------------------------------
@@ -121,7 +122,7 @@ class Shortcodes extends AbstractProvider implements
         $shortcodes = $this->getIterator();
 
         $offsetKeys = $shortcodes->getKeys();
-        $offsetRegex = join( '|', array_map( 'preg_quote', $offsetKeys ) );
+        $offsetRegex = join('|', array_map('preg_quote', $offsetKeys));
 
         // WARNING! Do not change this regex
         return '(.?)\[(' . $offsetRegex . ')\b(.*?)(?:(\/))?\](?:(.+?)\[\/\2\])?(.?)';
@@ -136,9 +137,9 @@ class Shortcodes extends AbstractProvider implements
      *
      * @return bool
      */
-    public function validate( $value )
+    public function validate($value)
     {
-        return (bool)is_callable( $value );
+        return (bool)is_callable($value);
     }
 
     // ------------------------------------------------------------------------
@@ -158,28 +159,28 @@ class Shortcodes extends AbstractProvider implements
      *
      * @return mixed False on failure.
      */
-    private function parseRegex( $match )
+    private function parseRegex($match)
     {
         // allow [[foo]] syntax for escaping a tag
-        if ( $match[ 1 ] == '[' && $match[ 6 ] == ']' ) {
-            return substr( $match[ 0 ], 1, -1 );
+        if ($match[ 1 ] == '[' && $match[ 6 ] == ']') {
+            return substr($match[ 0 ], 1, -1);
         }
 
         $offset = $match[ 2 ];
-        $attr = $this->parseRegexAttributes( $match[ 3 ] );
+        $attr = $this->parseRegexAttributes($match[ 3 ]);
 
-        if ( $this->exists( $offset ) ) {
-            if ( isset( $match[ 5 ] ) ) {
+        if ($this->exists($offset)) {
+            if (isset($match[ 5 ])) {
                 // enclosing tag - extra parameter
                 return $match[ 1 ] . call_user_func(
-                        $this->__get( $offset ),
+                        $this->__get($offset),
                         $attr,
                         $match[ 5 ],
                         $offset
                     ) . $match[ 6 ];
             } else {
                 // self-closing tag
-                return $match[ 1 ] . call_user_func( $this->__get( $offset ), $attr, null, $offset ) . $match[ 6 ];
+                return $match[ 1 ] . call_user_func($this->__get($offset), $attr, null, $offset) . $match[ 6 ];
             }
         }
     }
@@ -201,27 +202,27 @@ class Shortcodes extends AbstractProvider implements
      *
      * @return array List of attributes and their value.
      */
-    private function parseRegexAttributes( $string )
+    private function parseRegexAttributes($string)
     {
         $attr = [];
         $pattern = '/(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/';
-        $string = preg_replace( "/[\x{00a0}\x{200b}]+/u", " ", $string );
-        if ( preg_match_all( $pattern, $string, $match, PREG_SET_ORDER ) ) {
-            foreach ( $match as $m ) {
-                if ( ! empty( $m[ 1 ] ) ) {
-                    $attr[ strtolower( $m[ 1 ] ) ] = stripcslashes( $m[ 2 ] );
-                } elseif ( ! empty( $m[ 3 ] ) ) {
-                    $attr[ strtolower( $m[ 3 ] ) ] = stripcslashes( $m[ 4 ] );
-                } elseif ( ! empty( $m[ 5 ] ) ) {
-                    $attr[ strtolower( $m[ 5 ] ) ] = stripcslashes( $m[ 6 ] );
-                } elseif ( isset( $m[ 7 ] ) and strlen( $m[ 7 ] ) ) {
-                    $attr[] = stripcslashes( $m[ 7 ] );
-                } elseif ( isset( $m[ 8 ] ) ) {
-                    $attr[] = stripcslashes( $m[ 8 ] );
+        $string = preg_replace("/[\x{00a0}\x{200b}]+/u", " ", $string);
+        if (preg_match_all($pattern, $string, $match, PREG_SET_ORDER)) {
+            foreach ($match as $m) {
+                if ( ! empty($m[ 1 ])) {
+                    $attr[ strtolower($m[ 1 ]) ] = stripcslashes($m[ 2 ]);
+                } elseif ( ! empty($m[ 3 ])) {
+                    $attr[ strtolower($m[ 3 ]) ] = stripcslashes($m[ 4 ]);
+                } elseif ( ! empty($m[ 5 ])) {
+                    $attr[ strtolower($m[ 5 ]) ] = stripcslashes($m[ 6 ]);
+                } elseif (isset($m[ 7 ]) and strlen($m[ 7 ])) {
+                    $attr[] = stripcslashes($m[ 7 ]);
+                } elseif (isset($m[ 8 ])) {
+                    $attr[] = stripcslashes($m[ 8 ]);
                 }
             }
         } else {
-            $attr = ltrim( $string );
+            $attr = ltrim($string);
         }
 
         return $attr;

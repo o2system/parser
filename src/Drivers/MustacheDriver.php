@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Drivers;
@@ -33,16 +34,16 @@ class MustacheDriver extends BaseDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize( array $config )
+    public function initialize(array $config)
     {
-        if ( empty( $this->engine ) ) {
-            if ( $this->isSupported() ) {
+        if (empty($this->engine)) {
+            if ($this->isSupported()) {
                 $this->engine = new \Mustache_Engine();
             } else {
                 throw new BadThirdPartyException(
                     'PARSER_E_THIRD_PARTY',
                     0,
-                    [ 'Mustache Template Engine by Justin Hileman', 'https://github.com/bobthecow' ]
+                    ['Mustache Template Engine by Justin Hileman', 'https://github.com/bobthecow']
                 );
             }
         }
@@ -61,7 +62,7 @@ class MustacheDriver extends BaseDriver
      */
     public function isSupported()
     {
-        if ( class_exists( '\Mustache_Engine' ) ) {
+        if (class_exists('\Mustache_Engine')) {
             return true;
         }
 
@@ -77,9 +78,9 @@ class MustacheDriver extends BaseDriver
      *
      * @return string
      */
-    public function parse( array $vars = [] )
+    public function parse(array $vars = [])
     {
-        return $this->engine->render( $this->string, $vars );
+        return $this->engine->render($this->string, $vars);
     }
 
     // ------------------------------------------------------------------------
@@ -93,9 +94,9 @@ class MustacheDriver extends BaseDriver
      *
      * @return bool
      */
-    protected function isValidEngine( $engine )
+    protected function isValidEngine($engine)
     {
-        if ( $engine instanceof \Mustache_Engine ) {
+        if ($engine instanceof \Mustache_Engine) {
             return true;
         }
 

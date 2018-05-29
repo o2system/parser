@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Drivers;
@@ -33,16 +34,16 @@ class TwigDriver extends BaseDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize( array $config )
+    public function initialize(array $config)
     {
-        if ( empty( $this->engine ) ) {
-            if ( $this->isSupported() ) {
-                $this->engine = new \Twig_Environment( new \Twig_Loader_String() );
+        if (empty($this->engine)) {
+            if ($this->isSupported()) {
+                $this->engine = new \Twig_Environment(new \Twig_Loader_String());
             } else {
                 throw new BadThirdPartyException(
                     'PARSER_E_THIRD_PARTY',
                     0,
-                    [ 'Twig Template Engine by Sensio Labs', 'http://twig.sensiolabs.org/' ]
+                    ['Twig Template Engine by Sensio Labs', 'http://twig.sensiolabs.org/']
                 );
             }
         }
@@ -61,7 +62,7 @@ class TwigDriver extends BaseDriver
      */
     public function isSupported()
     {
-        if ( class_exists( '\Twig_Environment' ) ) {
+        if (class_exists('\Twig_Environment')) {
             return true;
         }
 
@@ -77,9 +78,9 @@ class TwigDriver extends BaseDriver
      *
      * @return string
      */
-    public function parse( array $vars = [] )
+    public function parse(array $vars = [])
     {
-        return $this->engine->render( $this->string, $vars );
+        return $this->engine->render($this->string, $vars);
     }
 
     // ------------------------------------------------------------------------
@@ -93,9 +94,9 @@ class TwigDriver extends BaseDriver
      *
      * @return bool
      */
-    protected function isValidEngine( $engine )
+    protected function isValidEngine($engine)
     {
-        if ( $engine instanceof \Twig_Environment ) {
+        if ($engine instanceof \Twig_Environment) {
             return true;
         }
 

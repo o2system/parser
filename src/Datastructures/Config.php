@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Datastructures;
@@ -26,7 +27,7 @@ class Config extends \O2System\Kernel\Datastructures\Config
      *
      * @param array $config
      */
-    public function __construct( array $config = [] )
+    public function __construct(array $config = [])
     {
         $defaultConfig = [
             'driver'            => 'moustache',
@@ -36,8 +37,8 @@ class Config extends \O2System\Kernel\Datastructures\Config
             'allowPhpGlobals'   => true,
         ];
 
-        $config = array_merge( $defaultConfig, $config );
+        $config = array_merge($defaultConfig, $config);
 
-        parent::__construct( $config );
+        parent::__construct($config);
     }
 }

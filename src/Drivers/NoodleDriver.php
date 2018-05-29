@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Drivers;
@@ -31,10 +32,10 @@ class NoodleDriver extends AbstractDriver
      *
      * @return static
      */
-    public function initialize( array $config )
+    public function initialize(array $config)
     {
-        if ( empty( $this->engine ) ) {
-            $this->engine = new Noodle( $config );
+        if (empty($this->engine)) {
+            $this->engine = new Noodle($config);
         }
 
         return $this;
@@ -49,9 +50,9 @@ class NoodleDriver extends AbstractDriver
      *
      * @return string
      */
-    public function parse( array $vars = [] )
+    public function parse(array $vars = [])
     {
-        return $this->engine->parseString( $this->string, $vars );
+        return $this->engine->parseString($this->string, $vars);
     }
 
     // ------------------------------------------------------------------------
@@ -65,7 +66,7 @@ class NoodleDriver extends AbstractDriver
      */
     public function isSupported()
     {
-        if ( class_exists( '\O2System\Parser\Engines\Noodle' ) ) {
+        if (class_exists('\O2System\Parser\Engines\Noodle')) {
             return true;
         }
 
@@ -83,9 +84,9 @@ class NoodleDriver extends AbstractDriver
      *
      * @return bool
      */
-    protected function isValidEngine( $engine )
+    protected function isValidEngine($engine)
     {
-        if ( $engine instanceof Noodle ) {
+        if ($engine instanceof Noodle) {
             return true;
         }
 

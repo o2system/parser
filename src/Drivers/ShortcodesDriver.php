@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Drivers;
@@ -32,10 +33,10 @@ class ShortcodesDriver extends AbstractDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize( array $config )
+    public function initialize(array $config)
     {
-        if ( empty( $this->engine ) ) {
-            $this->engine = new Shortcodes( $config );
+        if (empty($this->engine)) {
+            $this->engine = new Shortcodes($config);
         }
 
         return $this;
@@ -50,9 +51,9 @@ class ShortcodesDriver extends AbstractDriver
      *
      * @return string
      */
-    public function parse( array $vars = [] )
+    public function parse(array $vars = [])
     {
-        return $this->engine->parseString( $this->string, $vars );
+        return $this->engine->parseString($this->string, $vars);
     }
 
     // ------------------------------------------------------------------------
@@ -66,7 +67,7 @@ class ShortcodesDriver extends AbstractDriver
      */
     public function isSupported()
     {
-        if ( class_exists( '\O2System\Parser\Engines\Shortcodes' ) ) {
+        if (class_exists('\O2System\Parser\Engines\Shortcodes')) {
             return true;
         }
 
@@ -84,9 +85,9 @@ class ShortcodesDriver extends AbstractDriver
      *
      * @return bool
      */
-    protected function isValidEngine( $engine )
+    protected function isValidEngine($engine)
     {
-        if ( $engine instanceof Shortcodes ) {
+        if ($engine instanceof Shortcodes) {
             return true;
         }
 

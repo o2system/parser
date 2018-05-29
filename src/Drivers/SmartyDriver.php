@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Drivers;
@@ -33,16 +34,16 @@ class SmartyDriver extends BaseDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize( array $config )
+    public function initialize(array $config)
     {
-        if ( empty( $this->engine ) ) {
-            if ( $this->isSupported() ) {
+        if (empty($this->engine)) {
+            if ($this->isSupported()) {
                 $this->engine = new \Smarty();
             } else {
                 throw new BadThirdPartyException(
                     'PARSER_E_THIRD_PARTY',
                     0,
-                    [ 'Smarty Template Engine by New Digital Group, Inc', 'http://www.smarty.net/' ]
+                    ['Smarty Template Engine by New Digital Group, Inc', 'http://www.smarty.net/']
                 );
             }
         }
@@ -61,7 +62,7 @@ class SmartyDriver extends BaseDriver
      */
     public function isSupported()
     {
-        if ( class_exists( '\Smarty' ) ) {
+        if (class_exists('\Smarty')) {
             return true;
         }
 
@@ -77,13 +78,13 @@ class SmartyDriver extends BaseDriver
      *
      * @return string
      */
-    public function parse( array $vars = [] )
+    public function parse(array $vars = [])
     {
-        foreach ( $vars as $_assign_key => $_assign_value ) {
-            $this->engine->assign( $_assign_key, $_assign_value );
+        foreach ($vars as $_assign_key => $_assign_value) {
+            $this->engine->assign($_assign_key, $_assign_value);
         }
 
-        return $this->engine->fetch( 'string:' . $this->string );
+        return $this->engine->fetch('string:' . $this->string);
     }
 
     // ------------------------------------------------------------------------
@@ -97,9 +98,9 @@ class SmartyDriver extends BaseDriver
      *
      * @return bool
      */
-    protected function isValidEngine( $engine )
+    protected function isValidEngine($engine)
     {
-        if ( $engine instanceof \Smarty ) {
+        if ($engine instanceof \Smarty) {
             return true;
         }
 

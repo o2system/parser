@@ -135,16 +135,6 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return $this->__isset($driverOffset);
     }
 
-    public function getSourceFileDirectory()
-    {
-        return $this->sourceFileDirectory;
-    }
-
-    public function getSourceFilePath()
-    {
-        return $this->sourceFilePath;
-    }
-
     public function getSourceString()
     {
         return $this->sourceString;
@@ -172,8 +162,6 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return false;
     }
 
-    // ------------------------------------------------------------------------
-
     public function loadString($string)
     {
         $this->sourceString = $string;
@@ -199,6 +187,18 @@ class Drivers extends AbstractProvider implements ValidationInterface
         );
 
         return empty($this->sourceString);
+    }
+
+    public function getSourceFileDirectory()
+    {
+        return $this->sourceFileDirectory;
+    }
+
+    // ------------------------------------------------------------------------
+
+    public function getSourceFilePath()
+    {
+        return $this->sourceFilePath;
     }
 
     public function parse(array $vars = [])

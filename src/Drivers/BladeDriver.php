@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Drivers;
@@ -35,13 +36,13 @@ class BladeDriver extends AbstractDriver
      * @return $this
      * @throws \O2System\Core\Exceptions\BadThirdPartyException
      */
-    public function initialize( array $config )
+    public function initialize(array $config)
     {
-        if ( empty( $this->engine ) ) {
-            if ( $this->isSupported() ) {
-                $this->engine = new Blade( $config );
+        if (empty($this->engine)) {
+            if ($this->isSupported()) {
+                $this->engine = new Blade($config);
             } else {
-                throw new BadThirdPartyException( 'PARSER_E_THIRD_PARTY', 0, [ '\O2System\Parser\Engines\Blade' ] );
+                throw new BadThirdPartyException('PARSER_E_THIRD_PARTY', 0, ['\O2System\Parser\Engines\Blade']);
             }
         }
 
@@ -59,7 +60,7 @@ class BladeDriver extends AbstractDriver
      */
     public function isSupported()
     {
-        if ( class_exists( '\O2System\Parser\Engines\Blade' ) ) {
+        if (class_exists('\O2System\Parser\Engines\Blade')) {
             return true;
         }
 
@@ -75,9 +76,9 @@ class BladeDriver extends AbstractDriver
      *
      * @return string
      */
-    public function parse( array $vars = [] )
+    public function parse(array $vars = [])
     {
-        return $this->engine->parseString( $this->string, $vars );
+        return $this->engine->parseString($this->string, $vars);
     }
 
     // ------------------------------------------------------------------------
@@ -91,9 +92,9 @@ class BladeDriver extends AbstractDriver
      *
      * @return bool
      */
-    protected function isValidEngine( $engine )
+    protected function isValidEngine($engine)
     {
-        if ( $engine instanceof Blade ) {
+        if ($engine instanceof Blade) {
             return true;
         }
 

@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Parser\Abstracts;
@@ -28,43 +29,6 @@ abstract class AbstractEngine implements ParserEngineInterface
     use FileExtensionCollectorTrait;
     use FilePathCollectorTrait;
 
-    /**
-     * Base::parseFile
-     *
-     * @param string $filePath
-     * @param array  $vars
-     *
-     * @return string
-     */
-    public function parseFile( $filePath, array $vars = [] )
-    {
-        if(class_exists('O2System\Framework', false)) {
-            return view()->load($filePath, $vars, true);
-        } else {
-            $fileExtension = '.' . pathinfo( $filePath, PATHINFO_EXTENSION );
-
-            if ( in_array( $fileExtension, $this->fileExtensions ) AND is_file( $filePath ) ) {
-                return $this->parseString( file_get_contents( $filePath ), $vars );
-            }
-
-            // Try to find from filePaths
-            if ( count( $this->filePaths ) ) {
-                foreach ( $this->filePaths as $fileDirectory ) {
-                    $checkFilePath = $fileDirectory . $filePath;
-
-                    if ( in_array( $fileExtension, $this->fileExtensions ) AND is_file( $checkFilePath ) ) {
-                        return $this->parseString( file_get_contents( $checkFilePath ), $vars );
-                        break;
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    // ------------------------------------------------------------------------
-
     public function parsePartials($filename, $vars = null, $optionalFilename = null)
     {
         if (empty($vars)) {
@@ -73,6 +37,43 @@ abstract class AbstractEngine implements ParserEngineInterface
             }
         } else {
             return $this->parseFile($filename, $vars);
+        }
+
+        return null;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Base::parseFile
+     *
+     * @param string $filePath
+     * @param array  $vars
+     *
+     * @return string
+     */
+    public function parseFile($filePath, array $vars = [])
+    {
+        if (class_exists('O2System\Framework', false)) {
+            return view()->load($filePath, $vars, true);
+        } else {
+            $fileExtension = '.' . pathinfo($filePath, PATHINFO_EXTENSION);
+
+            if (in_array($fileExtension, $this->fileExtensions) AND is_file($filePath)) {
+                return $this->parseString(file_get_contents($filePath), $vars);
+            }
+
+            // Try to find from filePaths
+            if (count($this->filePaths)) {
+                foreach ($this->filePaths as $fileDirectory) {
+                    $checkFilePath = $fileDirectory . $filePath;
+
+                    if (in_array($fileExtension, $this->fileExtensions) AND is_file($checkFilePath)) {
+                        return $this->parseString(file_get_contents($checkFilePath), $vars);
+                        break;
+                    }
+                }
+            }
         }
 
         return null;
