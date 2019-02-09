@@ -1,18 +1,10 @@
-<div align="center" markdown="1">
-
 [![O2System Framework](http://o2system.id/assets/img/logo/logo-white-200px.png?logo)](http://o2system.id)
-</div>
-
-<div align="center" markdown="1">
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/o2system/parser/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/o2system/parser/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/o2system/parser/badges/build.png?b=master)](https://scrutinizer-ci.com/g/o2system/parser/build-status/master)
 [![Latest Stable Version](https://poser.pugx.org/o2system/parser/v/stable)](https://packagist.org/packages/o2system/parser)
 [![Total Downloads](https://poser.pugx.org/o2system/parser/downloads)](https://packagist.org/packages/o2system/parser)
 [![License](https://poser.pugx.org/o2system/parser/license)](https://packagist.org/packages/o2system/parser)
-
-</div>
-
 
 # O2System Parser
 O2System Parser is an Open Source PHP Template Engines Driver Library, it allows you to render view templates using different drivers.
@@ -49,10 +41,3 @@ Please kindly submit your [issues at Github](http://github.com/o2system/parser/i
 - PHP 7.2+
 - [Composer](https://getcomposer.org)
 - [O2System parser](https://github.com/o2system/parser)
-
-### Credits
-|Role|Name|
-|----|----|
-|Founder and Lead Projects|[Steeven Andrian Salim](http://steevenz.com)|
-|Documentation|[Steeven Andrian Salim](http://steevenz.com)
-|Github Pages Designer| [Teguh Rianto](http://teguhrianto.tk)

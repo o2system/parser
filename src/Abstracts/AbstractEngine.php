@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -29,6 +29,17 @@ abstract class AbstractEngine implements ParserEngineInterface
     use FileExtensionCollectorTrait;
     use FilePathCollectorTrait;
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * AbstractEngine::parsePartials
+     *
+     * @param string  $filename
+     * @param array   $vars
+     * @param string  $optionalFilename
+     *
+     * @return string|null
+     */
     public function parsePartials($filename, $vars = null, $optionalFilename = null)
     {
         if (empty($vars)) {
@@ -45,7 +56,7 @@ abstract class AbstractEngine implements ParserEngineInterface
     // ------------------------------------------------------------------------
 
     /**
-     * Base::parseFile
+     * AbstractEngine::parseFile
      *
      * @param string $filePath
      * @param array  $vars

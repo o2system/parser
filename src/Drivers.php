@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -19,7 +19,6 @@ use O2System\Psr\Parser\ParserDriverInterface;
 use O2System\Psr\Parser\ParserEngineInterface;
 use O2System\Psr\Patterns\Structural\Provider\AbstractProvider;
 use O2System\Psr\Patterns\Structural\Provider\ValidationInterface;
-use O2System\Spl\Exceptions\ErrorException;
 
 /**
  * Class Drivers
@@ -29,13 +28,17 @@ use O2System\Spl\Exceptions\ErrorException;
 class Drivers extends AbstractProvider implements ValidationInterface
 {
     /**
+     * Drivers::$config
+     * 
      * Compiler Config
      *
-     * @var Datastructures\Config
+     * @var DataStructures\Config
      */
     private $config;
 
     /**
+     * Drivers::$sourceFilePath
+     *
      * Compiler Source File Path
      *
      * @var string
@@ -43,6 +46,8 @@ class Drivers extends AbstractProvider implements ValidationInterface
     private $sourceFilePath;
 
     /**
+     * Drivers::$sourceFileDirectory
+     *
      * Compiler Source File Directory
      *
      * @var string
@@ -50,6 +55,8 @@ class Drivers extends AbstractProvider implements ValidationInterface
     private $sourceFileDirectory;
 
     /**
+     * Drivers::$sourceString
+     *
      * Compiler Source String
      *
      * @var string
@@ -57,6 +64,8 @@ class Drivers extends AbstractProvider implements ValidationInterface
     private $sourceString;
 
     /**
+     * Drivers::$vars
+     *
      * Compiler Vars
      *
      * @var array
@@ -68,9 +77,9 @@ class Drivers extends AbstractProvider implements ValidationInterface
     /**
      * Drivers::__construct
      *
-     * @param Datastructures\Config $config
+     * @param DataStructures\Config $config
      */
-    public function __construct(Datastructures\Config $config)
+    public function __construct(DataStructures\Config $config)
     {
         language()
             ->addFilePath(__DIR__ . DIRECTORY_SEPARATOR)
@@ -95,6 +104,14 @@ class Drivers extends AbstractProvider implements ValidationInterface
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Drivers::loadDriver
+     *
+     * @param string  $driverOffset
+     * @param array   $config
+     *
+     * @return bool
+     */
     public function loadDriver($driverOffset, array $config = [])
     {
         $driverClassName = '\O2System\Parser\Drivers\\' . ucfirst($driverOffset) . 'Driver';
@@ -112,6 +129,16 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return false;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Drivers::addDriver
+     *
+     * @param \O2System\Parser\Abstracts\AbstractDriver $driver
+     * @param string|null                               $driverOffset
+     *
+     * @return bool
+     */
     public function addDriver(Abstracts\AbstractDriver $driver, $driverOffset = null)
     {
         $driverOffset = (empty($driverOffset) ? get_class_name($driver) : $driverOffset);
@@ -136,11 +163,27 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return $this->__isset($driverOffset);
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Drivers::getSourceString
+     *
+     * @return string
+     */
     public function getSourceString()
     {
         return $this->sourceString;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Drivers::loadFile
+     *
+     * @param string $filePath
+     *
+     * @return bool
+     */
     public function loadFile($filePath)
     {
         if ($filePath instanceof \SplFileInfo) {
@@ -163,6 +206,15 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return false;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Drivers::loadString
+     *
+     * @param string $string
+     *
+     * @return bool
+     */
     public function loadString($string)
     {
         $this->sourceString = $string;
@@ -190,6 +242,13 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return empty($this->sourceString);
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Drivers::getSourceFileDirectory
+     *
+     * @return string
+     */
     public function getSourceFileDirectory()
     {
         return $this->sourceFileDirectory;
@@ -197,11 +256,25 @@ class Drivers extends AbstractProvider implements ValidationInterface
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Drivers::getSourceFilePath
+     *
+     * @return string
+     */
     public function getSourceFilePath()
     {
         return $this->sourceFilePath;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Drivers::parse
+     *
+     * @param array $vars
+     *
+     * @return bool|string Returns FALSE if failed.
+     */
     public function parse(array $vars = [])
     {
         $output = $this->parsePhp($vars);
@@ -226,6 +299,15 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return $output;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Drivers::parsePhp
+     *
+     * @param array $vars
+     *
+     * @return bool|string Returns FALSE if failed
+     */
     public function parsePhp(array $vars = [])
     {
         $this->loadVars($vars);
@@ -245,7 +327,7 @@ class Drivers extends AbstractProvider implements ValidationInterface
          */
         ob_start();
 
-        echo eval('?>' . str_replace([';?>',')?>', ');?>'], ['; ?>','); ?>', '); ?>'], $this->sourceString));
+        echo eval('?>' . str_replace([';?>', ')?>', ');?>'], ['; ?>', '); ?>', '); ?>'], $this->sourceString));
 
         $output = ob_get_contents();
         @ob_end_clean();
@@ -259,6 +341,15 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return $output;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Drivers::loadVars
+     *
+     * @param array $vars
+     *
+     * @return bool
+     */
     public function loadVars(array $vars)
     {
         $this->vars = array_merge($this->vars, $vars);
@@ -266,8 +357,10 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return (bool)empty($this->vars);
     }
 
+    // ------------------------------------------------------------------------
+
     /**
-     * Compiler::isValid
+     * Drivers::isValid
      *
      * @param mixed $value
      *
@@ -282,12 +375,16 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return false;
     }
 
+    // ------------------------------------------------------------------------
+
     /**
+     * Drivers::validateSyntax
+     *
      * Check the syntax of some PHP code.
      *
      * @param string $sourceCode PHP code to check.
      *
-     * @return boolean|array If false, then check was successful, otherwise an array(message,line) of errors is
+     * @return bool|array If false, then check was successful, otherwise an array(message,line) of errors is
      *                       returned.
      */
     function validateSyntax($sourceCode)

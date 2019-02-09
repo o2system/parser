@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,7 +15,8 @@ namespace O2System\Parser\Drivers;
 
 // ------------------------------------------------------------------------
 
-use O2System\Core\Exceptions\BadThirdPartyException;
+use O2System\Parser\Abstracts\AbstractDriver;
+use O2System\Spl\Exceptions\RuntimeException;
 
 /**
  * Class MarkdownDriver
@@ -24,23 +25,45 @@ use O2System\Core\Exceptions\BadThirdPartyException;
  *
  * @package O2System\Parser\Drivers
  */
-class MarkdownDriver extends BaseDriver
+class MarkdownDriver extends AbstractDriver
 {
+    /**
+     * MarkdownDriver::MARKDOWN_BASIC
+     *
+     * @var int
+     */
     const MARKDOWN_BASIC = 0;
 
+    /**
+     * MarkdownDriver::MARKDOWN_GITHUB
+     *
+     * @var int
+     */
     const MARKDOWN_GITHUB = 1;
 
+    /**
+     * MarkdownDriver::MARKDOWN_EXTRA
+     *
+     * @var int
+     */
     const MARKDOWN_EXTRA = 2;
 
+    /**
+     * MarkdownDriver::$flavour
+     *
+     * @var int
+     */
     private $flavour = 0;
+
+    // ------------------------------------------------------------------------
 
     /**
      * MarkdownDriver::initialize
      *
      * @param array $config
      *
-     * @return $this
-     * @throws \O2System\Core\Exceptions\BadThirdPartyException
+     * @return static
+     * @throws \O2System\Spl\Exceptions\RuntimeException
      */
     public function initialize(array $config)
     {
@@ -52,7 +75,7 @@ class MarkdownDriver extends BaseDriver
                     $this->setFlavour($config[ 'flavour' ]);
                 }
             } else {
-                throw new BadThirdPartyException(
+                throw new RuntimeException(
                     'PARSER_E_THIRD_PARTY',
                     0,
                     ['Markdown Parser by Carsten Brandt', 'https://github.com/cebe/markdown']

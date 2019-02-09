@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,6 +18,7 @@ namespace O2System\Parser\Drivers;
 use O2System\Core\Exceptions\BadThirdPartyException;
 use O2System\Parser\Abstracts\AbstractDriver;
 use O2System\Parser\Engines\Blade;
+use O2System\Spl\Exceptions\RuntimeException;
 
 /**
  * Class BladeDriver
@@ -33,8 +34,8 @@ class BladeDriver extends AbstractDriver
      *
      * @param array $config
      *
-     * @return $this
-     * @throws \O2System\Core\Exceptions\BadThirdPartyException
+     * @return static
+     * @throws \O2System\Spl\Exceptions\RuntimeException
      */
     public function initialize(array $config)
     {
@@ -42,7 +43,7 @@ class BladeDriver extends AbstractDriver
             if ($this->isSupported()) {
                 $this->engine = new Blade($config);
             } else {
-                throw new BadThirdPartyException('PARSER_E_THIRD_PARTY', 0, ['\O2System\Parser\Engines\Blade']);
+                throw new RuntimeException('PARSER_E_THIRD_PARTY', 0, ['\O2System\Parser\Engines\Blade']);
             }
         }
 
@@ -52,7 +53,7 @@ class BladeDriver extends AbstractDriver
     // ------------------------------------------------------------------------
 
     /**
-     * BaseDriver::isSupported
+     * BladeDriver::isSupported
      *
      * Checks if this template engine is supported on this system.
      *

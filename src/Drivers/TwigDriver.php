@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,7 +15,8 @@ namespace O2System\Parser\Drivers;
 
 // ------------------------------------------------------------------------
 
-use O2System\Core\Exceptions\BadThirdPartyException;
+use O2System\Parser\Abstracts\AbstractDriver;
+use O2System\Spl\Exceptions\RuntimeException;
 
 /**
  * Class TwigDriver
@@ -24,15 +25,15 @@ use O2System\Core\Exceptions\BadThirdPartyException;
  *
  * @package O2System\Parser\Drivers
  */
-class TwigDriver extends BaseDriver
+class TwigDriver extends AbstractDriver
 {
     /**
      * TwigDriver::initialize
      *
      * @param array $config
      *
-     * @return $this
-     * @throws \O2System\Core\Exceptions\BadThirdPartyException
+     * @return static
+     * @throws \O2System\Spl\Exceptions\RuntimeException
      */
     public function initialize(array $config)
     {
@@ -40,7 +41,7 @@ class TwigDriver extends BaseDriver
             if ($this->isSupported()) {
                 $this->engine = new \Twig_Environment(new \Twig_Loader_String());
             } else {
-                throw new BadThirdPartyException(
+                throw new RuntimeException(
                     'PARSER_E_THIRD_PARTY',
                     0,
                     ['Twig Template Engine by Sensio Labs', 'http://twig.sensiolabs.org/']
