@@ -69,7 +69,7 @@ class MarkdownDriver extends AbstractDriver
     {
         if (empty($this->engine)) {
             if ($this->isSupported()) {
-                $this->engine = \cebe\markdown\Markdown();
+                $this->engine = new \cebe\markdown\Markdown();
 
                 if (isset($config[ 'flavour' ])) {
                     $this->setFlavour($config[ 'flavour' ]);
