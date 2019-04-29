@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,31 +11,32 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Drivers;
+namespace O2System\Parser\Template\Adapters;
 
 // ------------------------------------------------------------------------
 
-use O2System\Parser\Abstracts\AbstractDriver;
-use O2System\Parser\Engines\Noodle;
+use O2System\Parser\Template\Abstracts\AbstractAdapter;
 
 /**
- * Class NoodleDriver
+ * Class Noodle
  *
- * @package O2System\Parser\Drivers
+ * @package O2System\Parser\Template\Adapters
  */
-class NoodleDriver extends AbstractDriver
+class Noodle extends AbstractAdapter
 {
     /**
-     * NoodleDriver::initialize
+     * Noodle::initialize
      *
      * @param array $config
      *
      * @return static
      */
-    public function initialize(array $config)
+    public function initialize(array $config = [])
     {
+        $config = array_merge($this->config, $config);
+
         if (empty($this->engine)) {
-            $this->engine = new Noodle($config);
+            $this->engine = new \O2System\Parser\Template\Engines\Noodle($config);
         }
 
         return $this;
@@ -44,7 +45,7 @@ class NoodleDriver extends AbstractDriver
     // ------------------------------------------------------------------------
 
     /**
-     * NoodleDriver::parse
+     * Noodle::parse
      *
      * @param array $vars Variable to be parsed.
      *
@@ -58,7 +59,7 @@ class NoodleDriver extends AbstractDriver
     // ------------------------------------------------------------------------
 
     /**
-     * NoodleDriver::isSupported
+     * Noodle::isSupported
      *
      * Checks if this template engine is supported on this system.
      *
@@ -66,7 +67,7 @@ class NoodleDriver extends AbstractDriver
      */
     public function isSupported()
     {
-        if (class_exists('\O2System\Parser\Engines\Noodle')) {
+        if (class_exists('\O2System\Parser\Template\Engines\Noodle')) {
             return true;
         }
 
@@ -76,7 +77,7 @@ class NoodleDriver extends AbstractDriver
     // ------------------------------------------------------------------------
 
     /**
-     * NoodleDriver::isValidEngine
+     * Noodle::isValidEngine
      *
      * Checks if is a valid Object Engine.
      *
@@ -86,7 +87,7 @@ class NoodleDriver extends AbstractDriver
      */
     protected function isValidEngine($engine)
     {
-        if ($engine instanceof Noodle) {
+        if ($engine instanceof \O2System\Parser\Template\Engines\Noodle) {
             return true;
         }
 

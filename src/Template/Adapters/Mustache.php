@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,40 +11,40 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Drivers;
+namespace O2System\Parser\Template\Adapters;
 
 // ------------------------------------------------------------------------
 
-use O2System\Core\Exceptions\BadThirdPartyException;
+use O2System\Parser\Template\Abstracts\AbstractAdapter;
+use O2System\Spl\Exceptions\RuntimeException;
 
 /**
- * Class BBCodeDriver
+ * Class Mustache
  *
- * This class driver for Parse BBCode for O2System PHP Framework templating system.
+ * This class driver for Mustache Template Engine for O2System PHP Framework templating system.
  *
- * @package O2System\Parser\Drivers
+ * @package O2System\Parser\Template\Adapters
  */
-class BBCodeDriver extends BaseDriver
+class Mustache extends AbstractAdapter
 {
     /**
-     * BBCodeDriver::initialize
+     * Mustache::initialize
      *
      * @param array $config
      *
-     * @return $this
-     * @throws \O2System\Core\Exceptions\BadThirdPartyException
+     * @return static
+     * @throws \O2System\Spl\Exceptions\RuntimeException
      */
-    public function initialize(array $config)
+    public function initialize(array $config = [])
     {
         if (empty($this->engine)) {
             if ($this->isSupported()) {
-                $this->engine = new \JBBCode\Parser();
-                $this->engine->addCodeDefinitionSet(new \JBBCode\DefaultCodeDefinitionSet());
+                $this->engine = new \Mustache_Engine();
             } else {
-                throw new BadThirdPartyException(
+                throw new RuntimeException(
                     'PARSER_E_THIRD_PARTY',
                     0,
-                    ['BBCode Parser by Jackson Owens', 'https://github.com/jbowens/jBBCode']
+                    ['Mustache Template Engine by Justin Hileman', 'https://github.com/bobthecow']
                 );
             }
         }
@@ -55,7 +55,7 @@ class BBCodeDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * BBCodeDriver::isSupported
+     * Mustache::isSupported
      *
      * Checks if this template engine is supported on this system.
      *
@@ -63,7 +63,7 @@ class BBCodeDriver extends BaseDriver
      */
     public function isSupported()
     {
-        if (class_exists('\JBBCode\Parser')) {
+        if (class_exists('\Mustache_Engine')) {
             return true;
         }
 
@@ -73,7 +73,7 @@ class BBCodeDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * BBCodeDriver::parse
+     * Mustache::parse
      *
      * @param array $vars Variable to be parsed.
      *
@@ -81,15 +81,13 @@ class BBCodeDriver extends BaseDriver
      */
     public function parse(array $vars = [])
     {
-        $this->engine->parse($this->string);
-
-        return $this->engine->getAsHtml();
+        return $this->engine->render($this->string, $vars);
     }
 
     // ------------------------------------------------------------------------
 
     /**
-     * BBCodeDriver::isValidEngine
+     * Mustache::isValidEngine
      *
      * Checks if is a valid Object Engine.
      *
@@ -99,7 +97,7 @@ class BBCodeDriver extends BaseDriver
      */
     protected function isValidEngine($engine)
     {
-        if ($engine instanceof \JBBCode\Parser) {
+        if ($engine instanceof \Mustache_Engine) {
             return true;
         }
 

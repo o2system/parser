@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,39 +11,40 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Drivers;
+namespace O2System\Parser\Template\Adapters;
 
 // ------------------------------------------------------------------------
 
-use O2System\Core\Exceptions\BadThirdPartyException;
+use O2System\Parser\Template\Abstracts\AbstractAdapter;
+use O2System\Spl\Exceptions\RuntimeException;
 
 /**
- * Class TwigDriver
+ * Class Dwoo
  *
- * This class driver for Twig Template Engine for O2System PHP Framework templating system.
+ * This class driver for Dwoo Template Engine for O2System PHP Framework templating system.
  *
- * @package O2System\Parser\Drivers
+ * @package O2System\Parser\Template\Adapters
  */
-class TwigDriver extends BaseDriver
+class Dwoo extends AbstractAdapter
 {
     /**
-     * TwigDriver::initialize
+     * Dwoo::initialize
      *
      * @param array $config
      *
-     * @return $this
-     * @throws \O2System\Core\Exceptions\BadThirdPartyException
+     * @return static
+     * @throws \O2System\Spl\Exceptions\RuntimeException
      */
-    public function initialize(array $config)
+    public function initialize(array $config = [])
     {
         if (empty($this->engine)) {
             if ($this->isSupported()) {
-                $this->engine = new \Twig_Environment(new \Twig_Loader_String());
+                $this->engine = new \Dwoo();
             } else {
-                throw new BadThirdPartyException(
+                throw new RuntimeException(
                     'PARSER_E_THIRD_PARTY',
                     0,
-                    ['Twig Template Engine by Sensio Labs', 'http://twig.sensiolabs.org/']
+                    ['Dwoo Template Engine by David Sanchez', 'https://github.com/dwoo-project/dwoo']
                 );
             }
         }
@@ -54,7 +55,7 @@ class TwigDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * TwigDriver::isSupported
+     * Dwoo::isSupported
      *
      * Checks if this template engine is supported on this system.
      *
@@ -62,7 +63,7 @@ class TwigDriver extends BaseDriver
      */
     public function isSupported()
     {
-        if (class_exists('\Twig_Environment')) {
+        if (class_exists('\Dwoo')) {
             return true;
         }
 
@@ -72,7 +73,7 @@ class TwigDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * TwigDriver::parse
+     * Dwoo::parse
      *
      * @param array $vars Variable to be parsed.
      *
@@ -80,13 +81,13 @@ class TwigDriver extends BaseDriver
      */
     public function parse(array $vars = [])
     {
-        return $this->engine->render($this->string, $vars);
+        return $this->engine->get(new \Dwoo_Template_String($this->string), $vars);
     }
 
     // ------------------------------------------------------------------------
 
     /**
-     * TwigDriver::isValidEngine
+     * Dwoo::isValidEngine
      *
      * Checks if is a valid Object Engine.
      *
@@ -96,7 +97,7 @@ class TwigDriver extends BaseDriver
      */
     protected function isValidEngine($engine)
     {
-        if ($engine instanceof \Twig_Environment) {
+        if ($engine instanceof \Dwoo) {
             return true;
         }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,40 +11,39 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Drivers;
+namespace O2System\Parser\Template\Adapters;
 
 // ------------------------------------------------------------------------
 
-use O2System\Core\Exceptions\BadThirdPartyException;
+use O2System\Parser\Template\Abstracts\AbstractAdapter;
+use O2System\Spl\Exceptions\RuntimeException;
 
 /**
- * Class DwooDriver
+ * Class Blade
  *
- * This class driver for Dwoo Template Engine for O2System PHP Framework templating system.
+ * This class driver for Laravel's Blade Template Engine for O2System PHP Framework templating system.
  *
- * @package O2System\Parser\Drivers
+ * @package O2System\Parser\Template\Adapters
  */
-class DwooDriver extends BaseDriver
+class Blade extends AbstractAdapter
 {
     /**
-     * DwooDriver::initialize
+     * Blade::initialize
      *
      * @param array $config
      *
-     * @return $this
-     * @throws \O2System\Core\Exceptions\BadThirdPartyException
+     * @return static
+     * @throws \O2System\Spl\Exceptions\RuntimeException
      */
-    public function initialize(array $config)
+    public function initialize(array $config = [])
     {
+        $config = array_merge($this->config, $config);
+
         if (empty($this->engine)) {
             if ($this->isSupported()) {
-                $this->engine = new \Dwoo();
+                $this->engine = new \O2System\Parser\Template\Engines\Blade($config);
             } else {
-                throw new BadThirdPartyException(
-                    'PARSER_E_THIRD_PARTY',
-                    0,
-                    ['BBCode Parser by Jackson Owens', 'https://github.com/jbowens/jBBCode']
-                );
+                throw new RuntimeException('PARSER_E_THIRD_PARTY', 0, ['\O2System\Parser\Engines\Blade']);
             }
         }
 
@@ -54,7 +53,7 @@ class DwooDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * DwooDriver::isSupported
+     * Blade::isSupported
      *
      * Checks if this template engine is supported on this system.
      *
@@ -62,7 +61,7 @@ class DwooDriver extends BaseDriver
      */
     public function isSupported()
     {
-        if (class_exists('\Dwoo')) {
+        if (class_exists('\O2System\Parser\Template\Engines\Blade')) {
             return true;
         }
 
@@ -72,7 +71,7 @@ class DwooDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * DwooDriver::parse
+     * Blade::parse
      *
      * @param array $vars Variable to be parsed.
      *
@@ -80,13 +79,13 @@ class DwooDriver extends BaseDriver
      */
     public function parse(array $vars = [])
     {
-        return $this->engine->get(new \Dwoo_Template_String($this->string), $vars);
+        return $this->engine->parseString($this->string, $vars);
     }
 
     // ------------------------------------------------------------------------
 
     /**
-     * DwooDriver::isValidEngine
+     * Blade::isValidEngine
      *
      * Checks if is a valid Object Engine.
      *
@@ -96,7 +95,7 @@ class DwooDriver extends BaseDriver
      */
     protected function isValidEngine($engine)
     {
-        if ($engine instanceof \Dwoo) {
+        if ($engine instanceof \O2System\Parser\Template\Engines\Blade) {
             return true;
         }
 

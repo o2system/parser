@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,22 +11,26 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Engines;
+namespace O2System\Parser\Template\Engines;
 
 // ------------------------------------------------------------------------
 
-use O2System\Parser\Abstracts\AbstractEngine;
-use O2System\Psr\Parser\ParserEngineInterface;
+use O2System\Parser\Template\Abstracts\AbstractEngine;
+use O2System\Spl\Traits\Collectors\ConfigCollectorTrait;
 
 /**
  * Class Noodle
  *
- * @package O2System\Parser\Engines
+ * @package O2System\Parser\Template\Engines
  */
-class Noodle extends AbstractEngine implements ParserEngineInterface
+class Noodle extends AbstractEngine
 {
+    use ConfigCollectorTrait;
+
     /**
-     * Noodle File Extensions
+     * Noodle::$extensions
+     *
+     * List of noodle file extensions.
      *
      * @var array
      */
@@ -39,17 +43,6 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
         '.phtml',
     ];
 
-    /**
-     * Blade Config
-     *
-     * @var array
-     */
-    private $config = [
-        'allowPhpGlobals'   => true,
-        'allowPhpFunctions' => true,
-        'allowPhpConstants' => true,
-    ];
-
     // ------------------------------------------------------------------------
 
     /**
@@ -59,11 +52,24 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
      */
     public function __construct(array $config = [])
     {
-        $this->config = array_merge($this->config, $config);
+        $this->config = array_merge([
+            'allowPhpGlobals'   => true,
+            'allowPhpFunctions' => true,
+            'allowPhpConstants' => true,
+        ], $config);
     }
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Noodle::parseString
+     *
+     * @param string  $string
+     * @param array   $vars
+     *
+     * @return false|string Returns FALSE if failed.
+     * @throws \Exception
+     */
     public function parseString($string, array $vars = [])
     {
         if ($this->config[ 'allowPhpGlobals' ] === false) {
@@ -202,8 +208,8 @@ class Noodle extends AbstractEngine implements ParserEngineInterface
             '{{%% || %%}}'       => '<?php echo ( empty(\1) ? \2 : \1 ); ?>',
             '{{$%%->%%(%%)}}'    => '<?php echo $\1->\2(\3); ?>',
             '{{$%%->%%}}'        => '<?php echo @$\1->\2; ?>',
-            '{{$%%[%%]}}'        => '<?php echo @$\1->\2; ?>',
-            '{{$%%.%%}}'         => '<?php echo @$\1->\2; ?>',
+            '{{$%%[%%]}}'        => '<?php echo @$\1[\2]; ?>',
+            '{{$%%.%%}}'         => '<?php echo @$\1[\2]; ?>',
             '{{$%% = %%}}'       => '<?php $\1 = \2; ?>',
             '{{$%%++}}'          => '<?php $\1++; ?>',
             '{{$%%--}}'          => '<?php $\1--; ?>',

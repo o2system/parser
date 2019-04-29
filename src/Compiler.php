@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,26 +15,27 @@ namespace O2System\Parser;
 
 // ------------------------------------------------------------------------
 
-use O2System\Psr\Parser\ParserDriverInterface;
-use O2System\Psr\Parser\ParserEngineInterface;
-use O2System\Psr\Patterns\Structural\Provider\AbstractProvider;
-use O2System\Psr\Patterns\Structural\Provider\ValidationInterface;
+use O2System\Spl\Patterns\Structural\Provider\AbstractProvider;
 
 /**
- * Class Drivers
+ * Class Compiler
  *
  * @package O2System\Parser
  */
-class Drivers extends AbstractProvider implements ValidationInterface
+class Compiler extends AbstractProvider
 {
     /**
+     * Compiler::$config
+     * 
      * Compiler Config
      *
-     * @var Datastructures\Config
+     * @var DataStructures\Config
      */
     private $config;
 
     /**
+     * Compiler::$sourceFilePath
+     *
      * Compiler Source File Path
      *
      * @var string
@@ -42,6 +43,8 @@ class Drivers extends AbstractProvider implements ValidationInterface
     private $sourceFilePath;
 
     /**
+     * Compiler::$sourceFileDirectory
+     *
      * Compiler Source File Directory
      *
      * @var string
@@ -49,6 +52,8 @@ class Drivers extends AbstractProvider implements ValidationInterface
     private $sourceFileDirectory;
 
     /**
+     * Compiler::$sourceString
+     *
      * Compiler Source String
      *
      * @var string
@@ -56,37 +61,58 @@ class Drivers extends AbstractProvider implements ValidationInterface
     private $sourceString;
 
     /**
+     * Compiler::$vars
+     *
      * Compiler Vars
      *
      * @var array
      */
     private $vars = [];
 
+    /**
+     * Compiler::$template
+     *
+     * @var \O2System\Parser\Template\Collection
+     */
+    private $template;
+
+    /**
+     * Compiler::$string
+     *
+     * @var \O2System\Parser\String\Collection
+     */
+    private $string;
+
     // ------------------------------------------------------------------------
 
     /**
-     * Drivers::__construct
+     * Compiler::__construct
      *
-     * @param Datastructures\Config $config
+     * @param DataStructures\Config $config
      */
-    public function __construct(Datastructures\Config $config)
+    public function __construct(DataStructures\Config $config)
     {
         language()
             ->addFilePath(__DIR__ . DIRECTORY_SEPARATOR)
             ->loadFile('parser');
 
+        $this->template = new Template\Collection();
+        $this->string = new String\Collection();
+
         $this->config = $config;
 
-        if ($this->config->offsetExists('driver')) {
-            $this->loadDriver($this->config->driver, $this->config->getArrayCopy());
+        if ($this->config->offsetExists('template')) {
+            if(is_array($this->config->template)) {
+                foreach($this->config->template as $engine) {
+                    $this->template->load($engine);
+                }
+            }
         }
 
-        if ($this->config->offsetExists('drivers')) {
-            foreach ($this->config->drivers as $driver => $config) {
-                if (is_string($driver)) {
-                    $this->loadDriver($driver, $config);
-                } else {
-                    $this->loadDriver($config);
+        if ($this->config->offsetExists('string')) {
+            if(is_array($this->config->string)) {
+                foreach($this->config->string as $engine) {
+                    $this->string->load($engine);
                 }
             }
         }
@@ -94,52 +120,25 @@ class Drivers extends AbstractProvider implements ValidationInterface
 
     // ------------------------------------------------------------------------
 
-    public function loadDriver($driverOffset, array $config = [])
-    {
-        $driverClassName = '\O2System\Parser\Drivers\\' . ucfirst($driverOffset) . 'Driver';
-
-        if (class_exists($driverClassName)) {
-            if (isset($config[ 'engine' ])) {
-                unset($config[ 'engine' ]);
-            }
-
-            $this->register((new $driverClassName())->initialize($config), $driverOffset);
-
-            return $this->__isset($driverOffset);
-        }
-
-        return false;
-    }
-
-    public function addDriver(Abstracts\AbstractDriver $driver, $driverOffset = null)
-    {
-        $driverOffset = (empty($driverOffset) ? get_class_name($driver) : $driverOffset);
-        $driverOffset = strtolower($driverOffset);
-
-        if ($this->config->offsetExists($driverOffset)) {
-            $config = $this->config[ $driverOffset ];
-        } else {
-            $config = $this->config->getArrayCopy();
-        }
-
-        if (isset($config[ 'engine' ])) {
-            unset($config[ 'engine' ]);
-        }
-
-        if ($driver->isInitialize()) {
-            $this->register($driver, $driverOffset);
-        } else {
-            $this->register($driver->initialize($config), $driverOffset);
-        }
-
-        return $this->__isset($driverOffset);
-    }
-
+    /**
+     * Compiler::getSourceString
+     *
+     * @return string
+     */
     public function getSourceString()
     {
         return $this->sourceString;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Compiler::loadFile
+     *
+     * @param string $filePath
+     *
+     * @return bool
+     */
     public function loadFile($filePath)
     {
         if ($filePath instanceof \SplFileInfo) {
@@ -162,6 +161,15 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return false;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Compiler::loadString
+     *
+     * @param string $string
+     *
+     * @return bool
+     */
     public function loadString($string)
     {
         $this->sourceString = $string;
@@ -189,6 +197,13 @@ class Drivers extends AbstractProvider implements ValidationInterface
         return empty($this->sourceString);
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Compiler::getSourceFileDirectory
+     *
+     * @return string
+     */
     public function getSourceFileDirectory()
     {
         return $this->sourceFileDirectory;
@@ -196,38 +211,54 @@ class Drivers extends AbstractProvider implements ValidationInterface
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Compiler::getSourceFilePath
+     *
+     * @return string
+     */
     public function getSourceFilePath()
     {
         return $this->sourceFilePath;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Compiler::parse
+     *
+     * @param array $vars
+     *
+     * @return bool|string Returns FALSE if failed.
+     */
     public function parse(array $vars = [])
     {
-        $output = $this->parsePhp($vars);
+        $this->loadVars($vars);
 
-        foreach ($this->getIterator() as $driverName => $driverEngine) {
-            if ($driverEngine instanceof ParserDriverInterface) {
-                if ($driverEngine->isSupported() === false) {
-                    continue;
-                }
+        $output = $this->parsePhp();
 
-                $engine =& $driverEngine->getEngine();
+        // Run Template Engines
+        $output = $this->template->parse($output, $this->vars);
 
-                if ($engine instanceof ParserEngineInterface) {
-                    $engine->addFilePath($this->sourceFileDirectory);
-                }
-
-                $driverEngine->loadString($output);
-                $output = $driverEngine->parse($this->vars);
-            }
-        }
+        // Run String Engines
+        $output = $this->string->parse($output, $this->vars);
 
         return $output;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Compiler::parsePhp
+     *
+     * @param array $vars
+     *
+     * @return bool|string Returns FALSE if failed
+     */
     public function parsePhp(array $vars = [])
     {
-        $this->loadVars($vars);
+        if(count($vars)) {
+            $this->loadVars($vars);
+        }
 
         extract($this->vars);
 
@@ -244,34 +275,33 @@ class Drivers extends AbstractProvider implements ValidationInterface
          */
         ob_start();
 
-        echo eval('?>' . preg_replace('/;*\s*\?>/', '; ?>', $this->sourceString));
+        echo eval('?>' . str_replace([';?>', ')?>', ');?>'], ['; ?>', '); ?>', '); ?>'], $this->sourceString));
 
         $output = ob_get_contents();
         @ob_end_clean();
 
+        $lastError = error_get_last();
+
+        if (is_array($lastError)) {
+            $this->errorFilePath = $this->getSourceFilePath();
+        }
+
         return $output;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Compiler::loadVars
+     *
+     * @param array $vars
+     *
+     * @return bool
+     */
     public function loadVars(array $vars)
     {
         $this->vars = array_merge($this->vars, $vars);
 
         return (bool)empty($this->vars);
-    }
-
-    /**
-     * Compiler::isValid
-     *
-     * @param mixed $value
-     *
-     * @return bool
-     */
-    public function validate($value)
-    {
-        if ($value instanceof ParserDriverInterface) {
-            return true;
-        }
-
-        return false;
     }
 }

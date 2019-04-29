@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,39 +11,64 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Drivers;
+namespace O2System\Parser\String\Adapters;
 
 // ------------------------------------------------------------------------
 
-use O2System\Core\Exceptions\BadThirdPartyException;
+use O2System\Parser\String\Abstracts\AbstractAdapter;
+use O2System\Spl\Exceptions\RuntimeException;
 
 /**
- * Class MarkdownDriver
+ * Class Markdown
  *
  * This class driver for Parse Markdown Code for O2System PHP Framework templating system.
  *
  * @package O2System\Parser\Drivers
  */
-class MarkdownDriver extends BaseDriver
+class Markdown extends AbstractAdapter
 {
+    /**
+     * Markdown::MARKDOWN_BASIC
+     *
+     * @var int
+     */
     const MARKDOWN_BASIC = 0;
 
+    /**
+     * Markdown::MARKDOWN_GITHUB
+     *
+     * @var int
+     */
     const MARKDOWN_GITHUB = 1;
 
+    /**
+     * Markdown::MARKDOWN_EXTRA
+     *
+     * @var int
+     */
     const MARKDOWN_EXTRA = 2;
 
+    /**
+     * Markdown::$flavour
+     *
+     * @var int
+     */
     private $flavour = 0;
 
+    // ------------------------------------------------------------------------
+
     /**
-     * MarkdownDriver::initialize
+     * Markdown::initialize
      *
      * @param array $config
      *
-     * @return $this
-     * @throws \O2System\Core\Exceptions\BadThirdPartyException
+     * @return static
+     * @throws \O2System\Spl\Exceptions\RuntimeException
      */
-    public function initialize(array $config)
+    public function initialize(array $config = [])
     {
+        $config = array_merge($this->config, $config);
+
         if (empty($this->engine)) {
             if ($this->isSupported()) {
                 $this->engine = \cebe\markdown\Markdown();
@@ -52,7 +77,7 @@ class MarkdownDriver extends BaseDriver
                     $this->setFlavour($config[ 'flavour' ]);
                 }
             } else {
-                throw new BadThirdPartyException(
+                throw new RuntimeException(
                     'PARSER_E_THIRD_PARTY',
                     0,
                     ['Markdown Parser by Carsten Brandt', 'https://github.com/cebe/markdown']
@@ -66,7 +91,7 @@ class MarkdownDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * MarkdownDriver::isSupported
+     * Markdown::isSupported
      *
      * Checks if this template engine is supported on this system.
      *
@@ -95,7 +120,7 @@ class MarkdownDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * MarkdownDriver::parse
+     * Markdown::parse
      *
      * @param array $vars Variable to be parsed.
      *
@@ -132,7 +157,7 @@ class MarkdownDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * MarkdownDriver::isValidEngine
+     * Markdown::isValidEngine
      *
      * Checks if is a valid Object Engine.
      *

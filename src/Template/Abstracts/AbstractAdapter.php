@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,32 +11,24 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Abstracts;
+namespace O2System\Parser\Template\Abstracts;
 
 // ------------------------------------------------------------------------
 
-use O2System\Psr\Parser\ParserDriverInterface;
+use O2System\Spl\Traits\Collectors\ConfigCollectorTrait;
 
 /**
- * Class AbstractDriver
+ * Class AbstractAdapter
  *
- * @package O2System\Parser\Abstracts
+ * @package O2System\Parser\Template\Abstracts
  */
-abstract class AbstractDriver implements ParserDriverInterface
+abstract class AbstractAdapter
 {
-    /**
-     * Driver Config
-     *
-     * @var array
-     */
-    protected $config = [
-        'allowPhpScripts'   => true,
-        'allowPhpGlobals'   => true,
-        'allowPhpFunctions' => true,
-        'allowPhpConstants' => true,
-    ];
+    use ConfigCollectorTrait;
 
     /**
+     * AbstractAdapter::$engine
+     *
      * Driver Engine
      *
      * @var object
@@ -44,6 +36,8 @@ abstract class AbstractDriver implements ParserDriverInterface
     protected $engine;
 
     /**
+     * AbstractAdapter::$string
+     *
      * Driver Raw String
      *
      * @var string
@@ -53,7 +47,43 @@ abstract class AbstractDriver implements ParserDriverInterface
     // ------------------------------------------------------------------------
 
     /**
-     * BaseDriver::loadFile
+     * AbstractAdapter::__construct
+     */
+    public function __construct()
+    {
+        $this->setConfig([
+            'allowPhpScripts'   => true,
+            'allowPhpGlobals'   => true,
+            'allowPhpFunctions' => true,
+            'allowPhpConstants' => true,
+        ]);
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * AbstractAdapter::initialize
+     *
+     * @param array $config
+     */
+    abstract public function initialize(array $config = []);
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * AbstractAdapter::isInitialize
+     *
+     * @return bool
+     */
+    public function isInitialize()
+    {
+        return (bool)(empty($this->engine) ? false : true);
+    }
+
+    // --------------------------------------------------------------------------------------
+
+    /**
+     * AbstractAdapter::loadFile
      *
      * @param string $filePath
      *
@@ -75,7 +105,7 @@ abstract class AbstractDriver implements ParserDriverInterface
     // ------------------------------------------------------------------------
 
     /**
-     * BaseDriver::loadString
+     * AbstractAdapter::loadString
      *
      * @param string $string
      *
@@ -98,24 +128,11 @@ abstract class AbstractDriver implements ParserDriverInterface
 
     // ------------------------------------------------------------------------
 
-    public function isInitialize()
-    {
-        return (bool)(empty($this->engine) ? false : true);
-    }
-
-    // --------------------------------------------------------------------------------------
-
     /**
-     * BaseDriver::initialize
+     * AbstractAdapter::getEngine
      *
-     * @param array $config
-     *
-     * @return static
+     * @return object
      */
-    abstract public function initialize(array $config);
-
-    // ------------------------------------------------------------------------
-
     public function &getEngine()
     {
         return $this->engine;
@@ -123,6 +140,13 @@ abstract class AbstractDriver implements ParserDriverInterface
 
     // ------------------------------------------------------------------------
 
+    /**
+     * AbstractAdapter::setEngine
+     *
+     * @param object $engine
+     *
+     * @return bool
+     */
     public function setEngine($engine)
     {
         if ($this->isValidEngine($engine)) {
@@ -134,10 +158,27 @@ abstract class AbstractDriver implements ParserDriverInterface
         return false;
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * AbstractAdapter::isValidEngine
+     *
+     * @param object $engine
+     *
+     * @return mixed
+     */
     abstract protected function isValidEngine($engine);
 
     // ------------------------------------------------------------------------
 
+    /**
+     * AbstractAdapter::__call
+     *
+     * @param string  $method
+     * @param array   $arguments
+     *
+     * @return mixed|null
+     */
     public function __call($method, array $arguments = [])
     {
         if (method_exists($this, $method)) {
@@ -152,9 +193,20 @@ abstract class AbstractDriver implements ParserDriverInterface
     // ------------------------------------------------------------------------
 
     /**
-     * BaseDriver::isSupported
+     * AbstractAdapter::isSupported
      *
      * @return bool
      */
     abstract public function isSupported();
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * AbstractAdapter::parse
+     *
+     * @param array $vars Variable to be parsed.
+     *
+     * @return string
+     */
+    abstract public function parse(array $vars = []);
 }

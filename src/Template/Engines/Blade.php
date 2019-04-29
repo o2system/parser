@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,30 +11,34 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Engines;
+namespace O2System\Parser\Template\Engines;
 
 // ------------------------------------------------------------------------
 
-use O2System\Parser\Abstracts\AbstractEngine;
-use O2System\Psr\Parser\ParserEngineInterface;
+use O2System\Parser\Template\Abstracts\AbstractEngine;
+use O2System\Spl\Traits\Collectors\ConfigCollectorTrait;
 
 /**
  * Class Blade
  *
- * @package O2System\Parser\Engines
+ * @package O2System\Parser\Template\Engines
  *
  * @todo    :
  *      1. @include (done)
- *      2. @each
+ *      2. @each (done)
  *      3. @inject
  *      4. @stack
  *      5. @push
  *      6. @verbatim
  */
-class Blade extends AbstractEngine implements ParserEngineInterface
+class Blade extends AbstractEngine
 {
+    use ConfigCollectorTrait;
+
     /**
-     * Blade File Extensions
+     * Blade::$extensions
+     *
+     * List of blade file extensions.
      *
      * @var array
      */
@@ -45,39 +49,49 @@ class Blade extends AbstractEngine implements ParserEngineInterface
     ];
 
     /**
-     * Blade Config
+     * Blade::$vars
+     *
+     * Blade variables
      *
      * @var array
      */
-    private $config = [
-        'allowPhpGlobals'   => true,
-        'allowPhpFunctions' => true,
-        'allowPhpConstants' => true,
-    ];
+    protected $vars = [];
 
     /**
-     * Blade Variables
+     * Blade::$sections
+     *
+     * List of blade sections.
      *
      * @var array
      */
-    private $vars = [];
-
-    /**
-     * Blade Sections
-     *
-     * @var array
-     */
-    private $sections = [];
+    protected $sections = [];
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Blade::__construct
+     *
+     * @param array $config
+     */
     public function __construct(array $config = [])
     {
-        $this->config = array_merge($this->config, $config);
+        $this->config = array_merge([
+            'allowPhpGlobals'   => true,
+            'allowPhpFunctions' => true,
+            'allowPhpConstants' => true,
+        ], $config);
     }
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Blade::parseString
+     *
+     * @param string  $string
+     * @param array   $vars
+     *
+     * @return bool|string
+     */
     public function parseString($string, array $vars = [])
     {
         $this->vars =& $vars;
@@ -128,6 +142,13 @@ class Blade extends AbstractEngine implements ParserEngineInterface
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Blade::replaceString
+     *
+     * @param string $string
+     *
+     * @return bool|string
+     */
     private function replaceString($string)
     {
         if ($this->config[ 'allowPhpGlobals' ] === false) {
@@ -344,6 +365,13 @@ class Blade extends AbstractEngine implements ParserEngineInterface
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Blade::collectSection
+     *
+     * @param string $match
+     *
+     * @return string
+     */
     private function collectSection($match)
     {
         $section = str_replace(['\'', '(', ')'], '', trim($match[ 1 ]));
@@ -352,11 +380,18 @@ class Blade extends AbstractEngine implements ParserEngineInterface
 
         $this->sections[ $xSection[ 0 ] ] = $this->replaceString($xSection[ 1 ]);
 
-        return null;
+        return '';
     }
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Blade::collectSectionWithShow
+     *
+     * @param string $match
+     *
+     * @return string
+     */
     private function collectSectionWithShow($match)
     {
         $offset = str_replace(['(\'', '\')'], '', trim($match[ 1 ]));
@@ -367,6 +402,13 @@ class Blade extends AbstractEngine implements ParserEngineInterface
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Blade::collectSectionWithEnd
+     *
+     * @param string $match
+     *
+     * @return string
+     */
     private function collectSectionWithEnd($match)
     {
         $offset = str_replace(['(\'', '\')'], '', trim($match[ 1 ]));
@@ -374,11 +416,18 @@ class Blade extends AbstractEngine implements ParserEngineInterface
 
         $this->sections[ $offset ] = $this->replaceString($content);
 
-        return null;
+        return '';
     }
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Blade::collectSectionWithParent
+     *
+     * @param string $match
+     *
+     * @return string
+     */
     private function collectSectionWithParent($match)
     {
         $offset = str_replace(['(\'', '\')'], '', trim($match[ 1 ]));
@@ -390,6 +439,6 @@ class Blade extends AbstractEngine implements ParserEngineInterface
             $this->sections[ $offset ] = $content;
         }
 
-        return null;
+        return '';
     }
 }

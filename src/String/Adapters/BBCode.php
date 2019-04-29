@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,39 +11,41 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Drivers;
+namespace O2System\Parser\String\Adapters;
 
 // ------------------------------------------------------------------------
 
-use O2System\Core\Exceptions\BadThirdPartyException;
+use O2System\Parser\String\Abstracts\AbstractAdapter;
+use O2System\Spl\Exceptions\RuntimeException;
 
 /**
- * Class SmartyDriver
+ * Class BBCode
  *
- * This class driver for Smarty Template Engine for O2System PHP Framework templating system.
+ * This class driver for Parse BBCode for O2System PHP Framework templating system.
  *
  * @package O2System\Parser\Drivers
  */
-class SmartyDriver extends BaseDriver
+class BBCode extends AbstractAdapter
 {
     /**
-     * SmartyDriver::initialize
+     * BBCode::initialize
      *
      * @param array $config
      *
-     * @return $this
-     * @throws \O2System\Core\Exceptions\BadThirdPartyException
+     * @return static
+     * @throws \O2System\Spl\Exceptions\RuntimeException
      */
-    public function initialize(array $config)
+    public function initialize(array $config = [])
     {
         if (empty($this->engine)) {
             if ($this->isSupported()) {
-                $this->engine = new \Smarty();
+                $this->engine = new \JBBCode\Parser();
+                $this->engine->addCodeDefinitionSet(new \JBBCode\DefaultCodeDefinitionSet());
             } else {
-                throw new BadThirdPartyException(
+                throw new RuntimeException(
                     'PARSER_E_THIRD_PARTY',
                     0,
-                    ['Smarty Template Engine by New Digital Group, Inc', 'http://www.smarty.net/']
+                    ['BBCode Parser by Jackson Owens', 'https://github.com/jbowens/jBBCode']
                 );
             }
         }
@@ -54,7 +56,7 @@ class SmartyDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * SmartyDriver::isSupported
+     * BBCode::isSupported
      *
      * Checks if this template engine is supported on this system.
      *
@@ -62,7 +64,7 @@ class SmartyDriver extends BaseDriver
      */
     public function isSupported()
     {
-        if (class_exists('\Smarty')) {
+        if (class_exists('\JBBCode\Parser')) {
             return true;
         }
 
@@ -72,7 +74,7 @@ class SmartyDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * SmartyDriver::parse
+     * BBCode::parse
      *
      * @param array $vars Variable to be parsed.
      *
@@ -80,17 +82,15 @@ class SmartyDriver extends BaseDriver
      */
     public function parse(array $vars = [])
     {
-        foreach ($vars as $_assign_key => $_assign_value) {
-            $this->engine->assign($_assign_key, $_assign_value);
-        }
+        $this->engine->parse($this->string);
 
-        return $this->engine->fetch('string:' . $this->string);
+        return $this->engine->getAsHtml();
     }
 
     // ------------------------------------------------------------------------
 
     /**
-     * SmartyDriver::isValidEngine
+     * BBCode::isValidEngine
      *
      * Checks if is a valid Object Engine.
      *
@@ -100,7 +100,7 @@ class SmartyDriver extends BaseDriver
      */
     protected function isValidEngine($engine)
     {
-        if ($engine instanceof \Smarty) {
+        if ($engine instanceof \JBBCode\Parser) {
             return true;
         }
 

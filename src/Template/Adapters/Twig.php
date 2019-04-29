@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,39 +11,40 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Drivers;
+namespace O2System\Parser\Template\Adapters;
 
 // ------------------------------------------------------------------------
 
-use O2System\Core\Exceptions\BadThirdPartyException;
+use O2System\Parser\Template\Abstracts\AbstractAdapter;
+use O2System\Spl\Exceptions\RuntimeException;
 
 /**
- * Class MustacheDriver
+ * Class Twig
  *
- * This class driver for Mustache Template Engine for O2System PHP Framework templating system.
+ * This class driver for Twig Template Engine for O2System PHP Framework templating system.
  *
- * @package O2System\Parser\Drivers
+ * @package O2System\Parser\Template\Adapters
  */
-class MustacheDriver extends BaseDriver
+class Twig extends AbstractAdapter
 {
     /**
-     * MustacheDriver::initialize
+     * Twig::initialize
      *
      * @param array $config
      *
-     * @return $this
-     * @throws \O2System\Core\Exceptions\BadThirdPartyException
+     * @return static
+     * @throws \O2System\Spl\Exceptions\RuntimeException
      */
-    public function initialize(array $config)
+    public function initialize(array $config  =[])
     {
         if (empty($this->engine)) {
             if ($this->isSupported()) {
-                $this->engine = new \Mustache_Engine();
+                $this->engine = new \Twig_Environment(new \Twig_Loader_String());
             } else {
-                throw new BadThirdPartyException(
+                throw new RuntimeException(
                     'PARSER_E_THIRD_PARTY',
                     0,
-                    ['Mustache Template Engine by Justin Hileman', 'https://github.com/bobthecow']
+                    ['Twig Template Engine by Sensio Labs', 'http://twig.sensiolabs.org/']
                 );
             }
         }
@@ -54,7 +55,7 @@ class MustacheDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * MustacheDriver::isSupported
+     * Twig::isSupported
      *
      * Checks if this template engine is supported on this system.
      *
@@ -62,7 +63,7 @@ class MustacheDriver extends BaseDriver
      */
     public function isSupported()
     {
-        if (class_exists('\Mustache_Engine')) {
+        if (class_exists('\Twig_Environment')) {
             return true;
         }
 
@@ -72,7 +73,7 @@ class MustacheDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * MustacheDriver::parse
+     * Twig::parse
      *
      * @param array $vars Variable to be parsed.
      *
@@ -86,7 +87,7 @@ class MustacheDriver extends BaseDriver
     // ------------------------------------------------------------------------
 
     /**
-     * MustacheDriver::isValidEngine
+     * Twig::isValidEngine
      *
      * Checks if is a valid Object Engine.
      *
@@ -96,7 +97,7 @@ class MustacheDriver extends BaseDriver
      */
     protected function isValidEngine($engine)
     {
-        if ($engine instanceof \Mustache_Engine) {
+        if ($engine instanceof \Twig_Environment) {
             return true;
         }
 

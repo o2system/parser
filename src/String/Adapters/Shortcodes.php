@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,32 +11,32 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Drivers;
+namespace O2System\Parser\String\Adapters;
 
 // ------------------------------------------------------------------------
 
-use O2System\Parser\Abstracts\AbstractDriver;
-use O2System\Parser\Engines\Shortcodes;
+use O2System\Parser\String\Abstracts\AbstractAdapter;
 
 /**
- * Class ShortcodesDriver
+ * Class Shortcodes
  *
  * @package O2System\Parser\Drivers
  */
-class ShortcodesDriver extends AbstractDriver
+class Shortcodes extends AbstractAdapter
 {
     /**
-     * ShortcodesDriver::initialize
+     * Shortcodes::initialize
      *
      * @param array $config
      *
-     * @return $this
-     * @throws \O2System\Core\Exceptions\BadThirdPartyException
+     * @return static
      */
-    public function initialize(array $config)
+    public function initialize(array $config = [])
     {
+        $config = array_merge($this->config, $config);
+
         if (empty($this->engine)) {
-            $this->engine = new Shortcodes($config);
+            $this->engine = new \O2System\Parser\String\Engines\Shortcodes($config);
         }
 
         return $this;
@@ -45,7 +45,7 @@ class ShortcodesDriver extends AbstractDriver
     // ------------------------------------------------------------------------
 
     /**
-     * ShortcodesDriver::parse
+     * Shortcodes::parse
      *
      * @param array $vars Variable to be parsed.
      *
@@ -59,7 +59,7 @@ class ShortcodesDriver extends AbstractDriver
     // ------------------------------------------------------------------------
 
     /**
-     * ShortcodesDriver::isSupported
+     * Shortcodes::isSupported
      *
      * Checks if this template engine is supported on this system.
      *
@@ -67,7 +67,7 @@ class ShortcodesDriver extends AbstractDriver
      */
     public function isSupported()
     {
-        if (class_exists('\O2System\Parser\Engines\Shortcodes')) {
+        if (class_exists('\O2System\Parser\String\Engines\Shortcodes')) {
             return true;
         }
 
@@ -77,7 +77,7 @@ class ShortcodesDriver extends AbstractDriver
     // ------------------------------------------------------------------------
 
     /**
-     * ShortcodesDriver::isValidEngine
+     * Shortcodes::isValidEngine
      *
      * Checks if is a valid Object Engine.
      *
@@ -87,7 +87,7 @@ class ShortcodesDriver extends AbstractDriver
      */
     protected function isValidEngine($engine)
     {
-        if ($engine instanceof Shortcodes) {
+        if ($engine instanceof \O2System\Parser\String\Engines\Shortcodes) {
             return true;
         }
 

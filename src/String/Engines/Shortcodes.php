@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,13 +11,13 @@
 
 // ------------------------------------------------------------------------
 
-namespace O2System\Parser\Engines;
+namespace O2System\Parser\String\Engines;
 
 // ------------------------------------------------------------------------
 
-use O2System\Psr\Parser\ParserEngineInterface;
-use O2System\Psr\Patterns\Structural\Provider\AbstractProvider;
-use O2System\Psr\Patterns\Structural\Provider\ValidationInterface;
+use O2System\Spl\Patterns\Structural\Provider\AbstractProvider;
+use O2System\Spl\Patterns\Structural\Provider\ValidationInterface;
+use O2System\Spl\Traits\Collectors\ConfigCollectorTrait;
 use O2System\Spl\Traits\Collectors\FileExtensionCollectorTrait;
 use O2System\Spl\Traits\Collectors\FilePathCollectorTrait;
 
@@ -38,14 +38,37 @@ use O2System\Spl\Traits\Collectors\FilePathCollectorTrait;
  * support inline shortcodes in other shortcodes. You will have to call the
  * shortcode parser in your function to account for that.
  *
- * @package O2System\Parser\Engines
+ * @package O2System\Parser\Template\Engines
  */
 class Shortcodes extends AbstractProvider implements
-    ValidationInterface,
-    ParserEngineInterface
+    ValidationInterface
 {
     use FileExtensionCollectorTrait;
     use FilePathCollectorTrait;
+    use ConfigCollectorTrait;
+
+    /**
+     * Shortcodes::$config
+     *
+     * Shortcodes engine configurations.
+     *
+     * @var array
+     */
+    protected $config;
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Shortcodes::__construct
+     *
+     * @param array $config
+     */
+    public function __construct(array $config = [])
+    {
+        $this->config = array_merge($this->config, $config);
+    }
+
+    // ------------------------------------------------------------------------
 
     /**
      * Shortcodes::parseFile
