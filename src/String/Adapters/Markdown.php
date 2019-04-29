@@ -71,7 +71,7 @@ class Markdown extends AbstractAdapter
 
         if (empty($this->engine)) {
             if ($this->isSupported()) {
-                $this->engine = new \cebe\markdown\Markdown();
+                $this->engine = \cebe\markdown\Markdown();
 
                 if (isset($config[ 'flavour' ])) {
                     $this->setFlavour($config[ 'flavour' ]);
