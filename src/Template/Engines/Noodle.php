@@ -64,8 +64,8 @@ class Noodle extends AbstractEngine
     /**
      * Noodle::parseString
      *
-     * @param string  $string
-     * @param array   $vars
+     * @param string $string
+     * @param array  $vars
      *
      * @return false|string Returns FALSE if failed.
      * @throws \Exception
@@ -224,9 +224,9 @@ class Noodle extends AbstractEngine
             '{{ %% or %% }}'     => '<?php echo ( empty(\1) ? \'\2\' : \1 ); ?>',
             '{{ %% || %% }}'     => '<?php echo ( empty(\1) ? \'\2\' : \1 ); ?>',
             '{{ $%%->%%(%%) }}'  => '<?php echo $\1->\2(\3); ?>',
-            '{{ $%%->%% }}'      => '<?php echo @$\1->\2; ?>',
-            '{{ $%%[%%] }}'      => '<?php echo @$\1->\2; ?>',
-            '{{ $%%.%% }}'       => '<?php echo @$\1->\2; ?>',
+            '{{ $%%->%% }}'      => '<?php echo $\1->\2; ?>',
+            '{{ $%%[%%] }}'      => '<?php echo $\1->\2; ?>',
+            '{{ $%%.%% }}'       => '<?php echo $\1->\2; ?>',
             '{{ $%% = %% }}'     => '<?php $\1 = \2; ?>',
             '{{ $%%++ }}'        => '<?php $\1++; ?>',
             '{{ $%%-- }}'        => '<?php $\1--; ?>',
