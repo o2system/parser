@@ -1,4 +1,4 @@
-[![O2System Framework](http://o2system.id/assets/img/logo/logo-white-200px.png?logo)](http://o2system.id)
+![alt text](https://www.o2system.id/assets/img/covers/cover-o2system-atom-parser.png "O2System Parser Atom")
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/o2system/parser/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/o2system/parser/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/o2system/parser/badges/build.png?b=master)](https://scrutinizer-ci.com/g/o2system/parser/build-status/master)
